@@ -11,14 +11,14 @@ from .. import DOMElement
 
 class MenuBar(BaseLib):
     """
-    Class for manipulating the Firefox menubar.
+    Class for manipulating the Firefox menubar
     """
 
     @property
     def menus(self):
         """
-        :returns: A list of :class:`MenuElement`'s corresponding to the top
-                  level menus in the menubar.
+        :returns: A list of :class:`MenuElement` instances corresponding to
+                  the top level menus in the menubar
         """
         menus = (self.marionette.find_element('id', 'main-menubar')
                                 .find_elements('tag name', 'menu'))
@@ -28,8 +28,8 @@ class MenuBar(BaseLib):
         """
         Get a MenuElement corresponding to the specified label.
 
-        :param label: The label of the menu, e.g 'File' or 'View'
-        :returns: A MenuElement
+        :param label: The label of the menu, e.g., **File** or **View**
+        :returns: A :class:`MenuElement` 
         """
         menu = [m for m in self.menus if m.get_attribute('label') == label]
 
@@ -43,8 +43,8 @@ class MenuBar(BaseLib):
         """
         Select an item in a menu.
 
-        :param label: The label of the menu, e.g 'File' or 'View'
-        :param item: The label of the item in the menu, e.g 'New Tab'
+        :param label: The label of the menu, e.g., **File** or **View**
+        :param item: The label of the item in the menu, e.g., **New Tab**
         """
         return self.get_menu(label).select(item)
 
@@ -56,7 +56,7 @@ class MenuBar(BaseLib):
         @property
         def items(self):
             """
-            :returns: A list of menuitem elements within this menu.
+            :returns: A list of menuitem elements within this menu
             """
             return (self.find_element('tag name', 'menupopup')
                         .find_elements('tag name', 'menuitem'))
@@ -65,7 +65,7 @@ class MenuBar(BaseLib):
             """
             Click on a menuitem within this menu.
 
-            :param label: The label of the menuitem, e.g 'New Tab'
+            :param label: The label of the menuitem, e.g., **New Tab**
             """
             item = [l for l in self.items if l.get_attribute('label') == label]
 
