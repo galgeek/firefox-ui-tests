@@ -191,7 +191,10 @@ class BaseWindow(BaseLib):
 
     @property
     def focused(self):
-        """Returns `True` is the chrome window is focused."""
+        """Returns `True` if the chrome window is focused.
+
+        :returns: True if the window is focused.
+        """
         self.switch_to()
 
         return self.handle == self._windows.focused_chrome_window_handle
@@ -423,8 +426,7 @@ class BrowserWindow(BaseWindow):
 
     @use_class_as_property('ui.toolbars.NavBar')
     def navbar(self):
-        """
-        Provides access to the navigation bar. This is the toolbar containing
+        """Provides access to the navigation bar. This is the toolbar containing
         the back, forward and home buttons. It also contains the location bar.
 
         See the :class:`~ui.toolbars.NavBar` reference.
@@ -432,8 +434,7 @@ class BrowserWindow(BaseWindow):
 
     @property
     def tabbar(self):
-        """
-        Provides access to the tab bar. This is the toolbar containing all the
+        """Provides access to the tab bar. This is the toolbar containing all the
         tabs, the new tab button, and the tab menu.
 
         See the :class:`~ui.tabbar.TabBar` reference.

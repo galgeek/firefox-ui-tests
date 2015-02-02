@@ -19,7 +19,7 @@ class NavBar(BaseLib):
     def back_button(self):
         """ Provides access to the back button from the navbar ui.
 
-        :returns: The back button element.
+        :returns: The back button element
         """
         return self.marionette.find_element('id', 'back-button')
 
@@ -27,7 +27,7 @@ class NavBar(BaseLib):
     def forward_button(self):
         """ Provides access to the forward button from the navbar ui.
 
-        :returns: The forward button element.
+        :returns: The forward button element
         """
         return self.marionette.find_element('id', 'forward-button')
 
@@ -35,7 +35,7 @@ class NavBar(BaseLib):
     def home_button(self):
         """ Provides access to the home button from the navbar ui.
 
-        :returns: The home button element.
+        :returns: The home button element
         """
         return self.marionette.find_element('id', 'home-button')
 
@@ -51,7 +51,7 @@ class NavBar(BaseLib):
     def menu_button(self):
         """ Provides access to the menu button from the navbar ui.
 
-        :returns: The menu button element.
+        :returns: The menu button element
         """
         return self.marionette.find_element('id', 'PanelUI-menu-button')
 
@@ -97,7 +97,7 @@ class LocationBar(BaseLib):
     def contextmenu(self):
         """ Provides access to the urlbar context menu.
 
-        :returns: The urlbar contextmenu element.
+        :returns: The urlbar contextmenu element
         """
         parent = self.urlbar.find_element('anon attribute', {'anonid': 'textbox-input-box'})
         return parent.find_element('anon attribute', {'anonid': 'input-box-contextmenu'})
@@ -106,7 +106,7 @@ class LocationBar(BaseLib):
     def favicon(self):
         """ Provides access to the urlbar favicon.
 
-        :returns: The favicon element.
+        :returns: The favicon element
         """
         return self.marionette.find_element(By.ID, 'page-proxy-favicon')
 
@@ -114,7 +114,7 @@ class LocationBar(BaseLib):
         """Focus the location bar according to the provided event.
 
         :param evt: The event to synthesize in order to focus the urlbar
-                    (one of ``click`` or ``shortcut``).
+                    (one of `click` or `shortcut`).
         """
         if evt == 'click':
             self.urlbar.click()
@@ -133,7 +133,7 @@ class LocationBar(BaseLib):
         to the given action.
 
         :param action: The action correspoding to the retrieved value.
-        :returns: The urlbar contextmenu entry.
+        :returns: The urlbar contextmenu entry
         """
         # TODO: This method should be implemented via the menu API.
         entries = self.contextmenu.find_elements('css selector', 'menuitem')
@@ -145,7 +145,7 @@ class LocationBar(BaseLib):
     def history_drop_marker(self):
         """ Provides access to the history drop marker.
 
-        :returns: The history drop marker.
+        :returns: The history drop marker
         """
         return self.urlbar.find_element('anon attribute', {'anonid': 'historydropmarker'})
 
@@ -171,7 +171,7 @@ class LocationBar(BaseLib):
     def notification_popup(self):
         """ Provides access to the notification popup.
 
-        :returns: The notification popup.
+        :returns: The notification popup
         """
         return self.marionette.find_element(By.ID, "notification-popup")
 
@@ -179,7 +179,7 @@ class LocationBar(BaseLib):
     def reload_button(self):
         """ Provides access to the reload button.
 
-        :returns: The reload button.
+        :returns: The reload button
         """
         return self.marionette.find_element(By.ID, 'urlbar-reload-button')
 
@@ -187,7 +187,7 @@ class LocationBar(BaseLib):
         """Reload the currently open page.
 
         :param trigger: The event type to use to cause the reload. (one of
-                        ``shortcut``, ``shortcut2``, or ``button``).
+                        `shortcut`, `shortcut2`, or `button`).
         :param force: Whether to cause a forced reload.
         """
         # TODO: The force parameter is ignored for the moment. Use
@@ -205,7 +205,7 @@ class LocationBar(BaseLib):
     def stop_button(self):
         """ Provides access to the stop button.
 
-        :returns: The stop button.
+        :returns: The stop button
         """
         return self.marionette.find_element(By.ID, 'urlbar-stop-button')
 
@@ -213,7 +213,7 @@ class LocationBar(BaseLib):
     def urlbar(self):
         """ Provides access to the urlbar element.
 
-        :returns: The urlbar element.
+        :returns: The urlbar element
         """
         return self.marionette.find_element(By.ID, 'urlbar')
 
@@ -229,7 +229,7 @@ class LocationBar(BaseLib):
     def value(self):
         """ Provides access to the currently displayed value of the urlbar.
 
-        :returns: The urlbar value.
+        :returns: The urlbar value
         """
         return self.urlbar.get_attribute('value')
 
@@ -269,7 +269,7 @@ class AutocompleteResults(BaseLib):
         result in the urlbar.
 
         :param result: The result to inspect for matches.
-        :param match_type: The type of match to search for (one of ``title`` or ``url``).
+        :param match_type: The type of match to search for (one of `title` or `url`).
         """
 
         if match_type == 'title':
@@ -298,7 +298,7 @@ class AutocompleteResults(BaseLib):
     def visible_results(self):
         """ Supplies the list of visible autocomplete result nodes.
 
-        :returns: The list of visible results.
+        :returns: The list of visible results
         """
         return self.marionette.execute_script("""
           let rv = [];
@@ -324,16 +324,15 @@ class AutocompleteResults(BaseLib):
     def popup(self):
         """ Provides access to the popup result element.
 
-        :returns: The popup result element.
+        :returns: The popup result element
         """
         return self.marionette.find_element(By.ID,
                                             'PopupAutoCompleteRichResult')
 
     @property
     def results(self):
-        """ Povides access to the container node for autocomplete results.
-
-        :returns: The result container node.
+        """
+        :returns: The autocomplete result container node
         """
         return self.popup.find_element('anon attribute',
                                        {'anonid': 'richlistbox'})
@@ -345,41 +344,36 @@ class IdentityPopup(BaseLib):
 
     @property
     def box(self):
-        """ Provides access to the identity-box element.
-
-        :returns: The identity-box element.
+        """
+        :returns: The identity-box element
         """
         return self.marionette.find_element(By.ID, 'identity-box')
 
     @property
     def country_label(self):
-        """ Provides access to the identity-icon-country-label element.
-
-        :returns: The identity-icon-country-label element.
+        """
+        :returns: The identity-icon-country-label element
         """
         return self.marionette.find_element(By.ID, 'identity-icon-country-label')
 
     @property
     def encryption_label(self):
-        """ Provides access to the identity-popup-encryption-label element.
-
-        :returns: The identity-popup-encryption-label element.
+        """
+        :returns: The identity-popup-encryption-label element
         """
         return self.marionette.find_element(By.ID, 'identity-popup-encryption-label')
 
     @property
     def encryption_icon(self):
-        """ Provides access to the identity-popup-encryption-icon element.
-
-        :returns: The identity-popup-encryption-icon element.
+        """
+        :returns: The identity-popup-encryption-icon element
         """
         return self.marionette.find_element(By.ID, 'identity-popup-encryption-icon')
 
     @property
     def host(self):
-        """ Provides access to the identity-popup-content-host element.
-
-        :returns: The identity-popup-content-host element.
+        """
+        :returns: The identity-popup-content-host element
         """
         return self.marionette.find_element(By.ID, 'identity-popup-content-host')
 
@@ -387,62 +381,55 @@ class IdentityPopup(BaseLib):
     def is_open(self):
         """ Returns whether this popup is currently open.
 
-        :returns: True when the popup is open, otherwise false.
+        :returns: True when the popup is open, otherwise false
         """
         return self.popup.get_attribute('state') == 'open'
 
     @property
     def more_info_button(self):
-        """ Provides access to the identity-popup-more-info-button element.
-
-        :returns: The identity-popup-more-info-button element.
+        """
+        :returns: The identity-popup-more-info-button element
         """
         return self.marionette.find_element(By.ID, 'identity-popup-more-info-button')
 
     @property
     def organization_label(self):
-        """ Provides access to the identity-icon-label element.
-
-        :returns: The identity-icon-label element.
+        """
+        :returns: The identity-icon-label element
         """
         return self.marionette.find_element(By.ID, 'identity-icon-label')
 
     @property
     def owner(self):
-        """ Provides access to the identity-popup-content-owner element.
-
-        :returns: The identity-popup-content-owner element.
+        """
+        :returns: The identity-popup-content-owner element
         """
         return self.marionette.find_element(By.ID, 'identity-popup-content-owner')
 
     @property
     def owner_location(self):
-        """ Provides access to the identity-popup-content-supplemental element.
-
-        :returns: The identity-popup-content-supplemental element.
+        """
+        :returns: The identity-popup-content-supplemental element
         """
         return self.marionette.find_element(By.ID, 'identity-popup-content-supplemental')
 
     @property
     def popup(self):
-        """ Provides access to the identity-popup element.
-
-        :returns: The identity-popup element.
+        """
+        :returns: The identity-popup element
         """
         return self.marionette.find_element(By.ID, 'identity-popup')
 
     @property
     def permissions(self):
-        """ Provides access to the identity-popup-permissions element.
-
-        :returns: The identity-popup-permissions element.
+        """
+        :returns: The identity-popup-permissions element
         """
         return self.marionette.find_element(By.ID, 'identity-popup-permissions')
 
     @property
     def verifier(self):
-        """ Provides access to the identity-popup-content-verifier element.
-
-        :returns: The identity-popup-content-verifier element.
+        """
+        :returns: The identity-popup-content-verifier element
         """
         return self.marionette.find_element(By.ID, 'identity-popup-content-verifier')

@@ -28,8 +28,8 @@ class MenuBar(BaseLib):
         """
         Get a MenuElement corresponding to the specified label.
 
-        :param label: The label of the menu, e.g., **File** or **View**.
-        :returns: A :class:`MenuElement`.
+        :param label: The label of the menu, e.g., **File** or **View**
+        :returns: A :class:`MenuElement` instance
         """
         menu = [m for m in self.menus if m.get_attribute('label') == label]
 
