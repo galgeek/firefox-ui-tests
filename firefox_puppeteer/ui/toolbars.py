@@ -120,7 +120,7 @@ class LocationBar(BaseLib):
             self.urlbar.click()
         elif evt == 'shortcut':
             cmd_key = self.l10n.get_entity(LocationBar.dtds,
-                                                     'openCmd.commandkey')
+                                           'openCmd.commandkey')
             (self.marionette.find_element(By.ID, 'main-window')
                             .send_keys(self.keys.ACCEL, cmd_key))
         else:
@@ -198,7 +198,7 @@ class LocationBar(BaseLib):
             self.reload_button.click()
         elif trigger == 'shortcut':
             cmd_key = self.l10n.get_entity(LocationBar.dtds,
-                                                     'reloadCmd.commandkey')
+                                           'reloadCmd.commandkey')
             self.urlbar.send_keys(cmd_key)
         elif trigger == 'shortcut2':
             self.urlbar.send_keys(self.keys.F5)
