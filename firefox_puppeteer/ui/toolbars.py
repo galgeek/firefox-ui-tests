@@ -41,10 +41,10 @@ class NavBar(BaseLib):
 
     @use_class_as_property('ui.toolbars.LocationBar')
     def locationbar(self):
-        """Provides members for accessing and manipulationg the
+        """Provides members for accessing and manipulating the
         locationbar.
 
-        See the :class:`~ui.toolbars.LocationBar` reference.
+        See the :class:`LocationBar` reference.
         """
 
     @property
@@ -76,7 +76,7 @@ class LocationBar(BaseLib):
         """Provides utility members for accessing and manipulationg the
         locationbar.
 
-        See the :class:`~ui.toolbars.AutocompleteResults` reference.
+        See the :class:`AutocompleteResults` reference.
         """
 
     def clear(self):
@@ -104,7 +104,7 @@ class LocationBar(BaseLib):
 
     @property
     def favicon(self):
-        """ Provides asccess to the urlbar favicon.
+        """ Provides access to the urlbar favicon.
 
         :returns: The favicon element.
         """
@@ -114,7 +114,7 @@ class LocationBar(BaseLib):
         """Focus the location bar according to the provided event.
 
         :param evt: The event to synthesize in order to focus the urlbar
-                    (one of 'click' or 'shortcut').
+                    (one of ``click`` or ``shortcut``).
         """
         if evt == 'click':
             self.urlbar.click()
@@ -143,7 +143,7 @@ class LocationBar(BaseLib):
 
     @property
     def history_drop_marker(self):
-        """ Provides asccess to the history drop marker.
+        """ Provides access to the history drop marker.
 
         :returns: The history drop marker.
         """
@@ -151,10 +151,10 @@ class LocationBar(BaseLib):
 
     @use_class_as_property('ui.toolbars.IdentityPopup')
     def identity_popup(self):
-        """Provides utility members for accessing and manipulationg the
+        """Provides utility members for accessing and manipulating the
         locationbar.
 
-        See the :class:`~ui.toolbars.IdentityPopup` reference.
+        See the :class:`IdentityPopup` reference.
         """
 
     def load_url(self, url):
@@ -169,7 +169,7 @@ class LocationBar(BaseLib):
 
     @property
     def notification_popup(self):
-        """ Provides asccess to the notification popup.
+        """ Provides access to the notification popup.
 
         :returns: The notification popup.
         """
@@ -177,7 +177,7 @@ class LocationBar(BaseLib):
 
     @property
     def reload_button(self):
-        """ Provides asccess to the reload button.
+        """ Provides access to the reload button.
 
         :returns: The reload button.
         """
@@ -187,7 +187,7 @@ class LocationBar(BaseLib):
         """Reload the currently open page.
 
         :param trigger: The event type to use to cause the reload. (one of
-                        "shortcut", "shortcut2", or "button").
+                        ``shortcut``, ``shortcut2``, or ``button``).
         :param force: Whether to cause a forced reload.
         """
         # TODO: The force parameter is ignored for the moment. Use
@@ -203,7 +203,7 @@ class LocationBar(BaseLib):
 
     @property
     def stop_button(self):
-        """ Provides asccess to the stop button.
+        """ Provides access to the stop button.
 
         :returns: The stop button.
         """
@@ -265,11 +265,11 @@ class AutocompleteResults(BaseLib):
             lambda _: not self.is_open)
 
     def get_matching_text(self, result, match_type):
-        """Retuns an array of strings of the matching text within a autocomplete
+        """Returns an array of strings of the matching text within an autocomplete
         result in the urlbar.
 
         :param result: The result to inspect for matches.
-        :param match_type: The type of match to search for (one of "title", "url").
+        :param match_type: The type of match to search for (one of ``title`` or ``url``).
         """
 
         if match_type == 'title':
@@ -345,22 +345,42 @@ class IdentityPopup(BaseLib):
 
     @property
     def box(self):
+        """ Provides access to the identity-box element.
+
+        :returns: The identity-box element.
+        """
         return self.marionette.find_element(By.ID, 'identity-box')
 
     @property
     def country_label(self):
+        """ Provides access to the identity-icon-country-label element.
+
+        :returns: The identity-icon-country-label element.
+        """
         return self.marionette.find_element(By.ID, 'identity-icon-country-label')
 
     @property
     def encryption_label(self):
+        """ Provides access to the identity-popup-encryption-label element.
+
+        :returns: The identity-popup-encryption-label element.
+        """
         return self.marionette.find_element(By.ID, 'identity-popup-encryption-label')
 
     @property
     def encryption_icon(self):
+        """ Provides access to the identity-popup-encryption-icon element.
+
+        :returns: The identity-popup-encryption-icon element.
+        """
         return self.marionette.find_element(By.ID, 'identity-popup-encryption-icon')
 
     @property
     def host(self):
+        """ Provides access to the identity-popup-content-host element.
+
+        :returns: The identity-popup-content-host element.
+        """
         return self.marionette.find_element(By.ID, 'identity-popup-content-host')
 
     @property
@@ -373,28 +393,56 @@ class IdentityPopup(BaseLib):
 
     @property
     def more_info_button(self):
+        """ Provides access to the identity-popup-more-info-button element.
+
+        :returns: The identity-popup-more-info-button element.
+        """
         return self.marionette.find_element(By.ID, 'identity-popup-more-info-button')
 
     @property
     def organization_label(self):
+        """ Provides access to the identity-icon-label element.
+
+        :returns: The identity-icon-label element.
+        """
         return self.marionette.find_element(By.ID, 'identity-icon-label')
 
     @property
     def owner(self):
+        """ Provides access to the identity-popup-content-owner element.
+
+        :returns: The identity-popup-content-owner element.
+        """
         return self.marionette.find_element(By.ID, 'identity-popup-content-owner')
 
     @property
     def owner_location(self):
+        """ Provides access to the identity-popup-content-supplemental element.
+
+        :returns: The identity-popup-content-supplemental element.
+        """
         return self.marionette.find_element(By.ID, 'identity-popup-content-supplemental')
 
     @property
     def popup(self):
+        """ Provides access to the identity-popup element.
+
+        :returns: The identity-popup element.
+        """
         return self.marionette.find_element(By.ID, 'identity-popup')
 
     @property
     def permissions(self):
+        """ Provides access to the identity-popup-permissions element.
+
+        :returns: The identity-popup-permissions element.
+        """
         return self.marionette.find_element(By.ID, 'identity-popup-permissions')
 
     @property
     def verifier(self):
+        """ Provides access to the identity-popup-content-verifier element.
+
+        :returns: The identity-popup-content-verifier element.
+        """
         return self.marionette.find_element(By.ID, 'identity-popup-content-verifier')
