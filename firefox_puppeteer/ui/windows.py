@@ -21,8 +21,8 @@ class Windows(BaseLib):
     def all(self):
         """Retrieves a list of all open chrome windows.
 
-        :returns: List of :class:`BaseWindow`'s corresponding to the
-                  windows in `marionette.chrome_window_handles`.
+        :returns: List of :class:`BaseWindow` instances corresponding to the
+                  windows in ``marionette.chrome_window_handles``.
         """
         return [self.create_window_instance(handle) for handle in
                 self.marionette.chrome_window_handles]
@@ -37,7 +37,7 @@ class Windows(BaseLib):
 
     @property
     def focused_chrome_window_handle(self):
-        """Returns the currently focused chrome window handle
+        """Returns the currently focused chrome window handle.
 
         :returns: The `window handle` of the focused chrome window.
         """
@@ -79,7 +79,7 @@ class Windows(BaseLib):
             self.close(handle)
 
     def create_window_instance(self, handle, expected_class=None):
-        """Creates a :class:`BaseWindow` instance for the given chrome window
+        """Creates a :class:`BaseWindow` instance for the given chrome window.
 
         :param handle: The handle of the chrome window
         :param expected_class: Optional, check for the correct window class
@@ -125,7 +125,7 @@ class Windows(BaseLib):
     def switch_to(self, target):
         """Switches context to the specified chrome window.
 
-        :param target: The window to switch to. `target` can be a `handle` or a
+        :param target: The window to switch to. ``target`` can be a `handle` or a
                        callback that returns True in the context of the desired
                        window.
 
@@ -183,7 +183,7 @@ class BaseWindow(BaseLib):
 
     @property
     def closed(self):
-        """Returns closed state of the chrome window
+        """Returns closed state of the chrome window.
 
         :returns: True if the window has been closed.
         """
@@ -191,14 +191,14 @@ class BaseWindow(BaseLib):
 
     @property
     def focused(self):
-        """Returns `True` is the chrome window is focused"""
+        """Returns `True` is the chrome window is focused."""
         self.switch_to()
 
         return self.handle == self._windows.focused_chrome_window_handle
 
     @property
     def handle(self):
-        """Returns the `window handle` of the chrome window
+        """Returns the `window handle` of the chrome window.
 
         :returns: `window handle`
         """
@@ -206,7 +206,7 @@ class BaseWindow(BaseLib):
 
     @use_class_as_property('ui.menu.MenuBar')
     def menubar(self):
-        """Provides access to the menu bar. For example the 'File' menu.
+        """Provides access to the menu bar, for example, the **File** menu.
 
         See the :class:`~ui.menu.MenuBar` reference.
         """
@@ -224,11 +224,11 @@ class BaseWindow(BaseLib):
     def close(self, callback=None, force=False):
         """Closes the current chrome window.
 
-        If this is the last remaining window, the marionette session is ended.
+        If this is the last remaining window, the Marionette session is ended.
 
         :param callback: Optional, function to trigger the window to open. It is
          triggered with the current :class:`BaseWindow` as parameter.
-         Defaults to `window.open()`
+         Defaults to `window.open()`.
 
         :param force: Optional, forces the closing of the window by using the Gecko API.
          Defaults to `False`.
@@ -256,7 +256,7 @@ class BaseWindow(BaseLib):
         sleep(.5)
 
     def focus(self):
-        """Sets the focus to the current chrome window"""
+        """Sets the focus to the current chrome window."""
         return self._windows.focus(self.handle)
 
     def get_entity(self, entity_id):
@@ -282,7 +282,7 @@ class BaseWindow(BaseLib):
         return self._l10n.get_entity(self.dtds, property_id)
 
     def open_window(self, callback=None, expected_window_class=None):
-        """Opens a new top-level chrome window
+        """Opens a new top-level chrome window.
 
         :param callback: Optional, function to trigger the window to open. It is
          triggered with the current :class:`BaseWindow` as parameter.
@@ -320,20 +320,20 @@ class BaseWindow(BaseLib):
         return window
 
     def send_shortcut(self, command_key, **kwargs):
-        """Sends a keyboard shortcut to the window
+        """Sends a keyboard shortcut to the window.
 
-        :param command_key: The key (usually a letter) to be pressed
+        :param command_key: The key (usually a letter) to be pressed.
 
-        :param accel: Optional, If `True` the `Accel` modifier key is pressed. This key
-         differs between OS X (`Meta`) and Linux/Windows (`Ctrl`). Defaults to `False`
+        :param accel: Optional, If `True`, the `Accel` modifier key is pressed. This key
+         differs between OS X (`Meta`) and Linux/Windows (`Ctrl`). Defaults to `False`.
 
-        :param alt: Optional, If `True` the `Alt` modifier key is pressed. Defaults to `False`
+        :param alt: Optional, If `True`, the `Alt` modifier key is pressed. Defaults to `False`.
 
-        :param ctrl: Optional, If `True` the `Ctrl` modifier key is pressed. Defaults to `False`
+        :param ctrl: Optional, If `True`, the `Ctrl` modifier key is pressed. Defaults to `False`.
 
-        :param meta: Optional, If `True` the `Meta` modifier key is pressed. Defaults to `False`
+        :param meta: Optional, If `True`, the `Meta` modifier key is pressed. Defaults to `False`.
 
-        :param shift: Optional, If `True` the `Shift` modifier key is pressed. Defaults to `False`
+        :param shift: Optional, If `True`, the `Shift` modifier key is pressed. Defaults to `False`.
         """
 
         platform = self.marionette.session_capabilities['platformName'].lower()
@@ -365,10 +365,10 @@ class BaseWindow(BaseLib):
     def switch_to(self, focus=False):
         """Switches the context to this chrome window.
 
-        By default it will not focus the window. If that behavior is wanted the
-        `focus` parameter can be used.
+        By default it will not focus the window. If that behavior is wanted, the
+        ``focus`` parameter can be used.
 
-        :param focus: If `True` the chrome window will be focused
+        :param focus: If `True`, the chrome window will be focused.
 
         :returns: Current window as :class:`BaseWindow` instance
         """
@@ -405,7 +405,7 @@ class BrowserWindow(BaseWindow):
 
     @property
     def is_private(self):
-        """Returns True if it is a Private Browsing window."""
+        """Returns True if this is a Private Browsing window."""
         self.switch_to()
 
         with self.marionette.using_context('chrome'):
@@ -422,14 +422,14 @@ class BrowserWindow(BaseWindow):
         Provides access to the navigation bar. This is the toolbar containing
         the back, forward and home buttons. It also contains the location bar.
 
-        See the :class:`~ui.navbar.NavBar` reference.
+        See the :class:`~ui.toolbars.NavBar` reference.
         """
 
     @property
     def tabbar(self):
         """
         Provides access to the tab bar. This is the toolbar containing all the
-        tabs, the new tab button, and the tab menu
+        tabs, the new tab button, and the tab menu.
 
         See the :class:`~ui.tabbar.TabBar` reference.
         """
@@ -444,9 +444,9 @@ class BrowserWindow(BaseWindow):
     def close(self, trigger='menu', force=False):
         """Closes the current browser window by using the specified trigger.
 
-        :param trigger: Optional, method in how to close the current browser window. This can
-         be a string with one of `menu` or `shortcut`, or a callback which gets triggered
-         with the current :class:`BrowserWindow` as parameter. Defaults to `menu`.
+        :param trigger: Optional, method to close the current browser window. This can
+         be a string with one of ``menu`` or ``shortcut``, or a callback which gets triggered
+         with the current :class:`BrowserWindow` as parameter. Defaults to ``menu``.
 
         :param force: Optional, forces the closing of the window by using the Gecko API.
          Defaults to `False`.
