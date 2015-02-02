@@ -324,16 +324,21 @@ class BaseWindow(BaseLib):
 
         :param command_key: The key (usually a letter) to be pressed.
 
-        :param accel: Optional, If `True`, the `Accel` modifier key is pressed. This key
-         differs between OS X (`Meta`) and Linux/Windows (`Ctrl`). Defaults to `False`.
+        :param accel: Optional, If `True`, the `Accel` modifier key is pressed.
+                      This key differs between OS X (`Meta`) and
+                      Linux/Windows (`Ctrl`). Defaults to `False`.
 
-        :param alt: Optional, If `True`, the `Alt` modifier key is pressed. Defaults to `False`.
+        :param alt: Optional, If `True`, the `Alt` modifier key is pressed.
+                    Defaults to `False`.
 
-        :param ctrl: Optional, If `True`, the `Ctrl` modifier key is pressed. Defaults to `False`.
+        :param ctrl: Optional, If `True`, the `Ctrl` modifier key is pressed.
+                     Defaults to `False`.
 
-        :param meta: Optional, If `True`, the `Meta` modifier key is pressed. Defaults to `False`.
+        :param meta: Optional, If `True`, the `Meta` modifier key is pressed.
+                     Defaults to `False`.
 
-        :param shift: Optional, If `True`, the `Shift` modifier key is pressed. Defaults to `False`.
+        :param shift: Optional, If `True`, the `Shift` modifier key is pressed.
+                      Defaults to `False`.
         """
 
         platform = self.marionette.session_capabilities['platformName'].lower()
