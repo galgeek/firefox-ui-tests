@@ -119,7 +119,7 @@ class TestWindows(FirefoxTestCase):
         # Check for an unexpected window class
         self.assertRaises(errors.UnexpectedWindowTypeError,
                           win1.open_window, expected_window_class=BaseWindow)
-        self.windows.close_all([BaseWindow(lambda: self.marionette, win1.handle)])
+        self.windows.close_all([win1])
 
     def test_base_window_switch_to_and_focus(self):
         # force BaseWindow instance

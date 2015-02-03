@@ -60,17 +60,18 @@ class Windows(BaseLib):
         # TODO: Maybe needs to wait as handled via an observer
         return self.marionette.close_chrome_window()
 
-    def close_all(self, exceptions=[]):
+    def close_all(self, exceptions=None):
         """Closes all open chrome windows.
 
         There is an optional `exceptions` list, which can be used to exclude
         specific chrome windows from being closed.
 
-        :param exceptions: Optional, list of :class:`BaseWindow` instances
-                           not to close
+        :param exceptions: Optional, list of :class:`BaseWindow` instances not to close
         """
-        # Get handles of BaseWindow instances in exceptions
-        handles_to_keep = [entry.handle for entry in exceptions]
+        windows_to_keep = exceptions or []
+
+        # Get handles of windows_to_keep
+        handles_to_keep = [entry.handle for entry in windows_to_keep]
 
         # Find handles to close and close them all
         handles_to_close = set(self.marionette.chrome_window_handles) - set(handles_to_keep)
