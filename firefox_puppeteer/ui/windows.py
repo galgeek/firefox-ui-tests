@@ -53,7 +53,7 @@ class Windows(BaseLib):
     def close(self, handle):
         """Closes the chrome window with the given handle.
 
-        :param handle: The handle of the chrome window
+        :param handle: The handle of the chrome window.
         """
         self.switch_to(handle)
 
@@ -81,8 +81,8 @@ class Windows(BaseLib):
     def create_window_instance(self, handle, expected_class=None):
         """Creates a :class:`BaseWindow` instance for the given chrome window.
 
-        :param handle: The handle of the chrome window
-        :param expected_class: Optional, check for the correct window class
+        :param handle: The handle of the chrome window.
+        :param expected_class: Optional, check for the correct window class.
         """
         current_handle = self.marionette.current_chrome_window_handle
         window = None
@@ -112,7 +112,7 @@ class Windows(BaseLib):
     def focus(self, handle):
         """Focuses the chrome window with the given handle.
 
-        :param handle: The handle of the chrome window
+        :param handle: The handle of the chrome window.
         """
         self.switch_to(handle)
 
@@ -129,7 +129,7 @@ class Windows(BaseLib):
                        callback that returns True in the context of the desired
                        window.
 
-        :returns: Instance of the selected :class:`BaseWindow`
+        :returns: Instance of the selected :class:`BaseWindow`.
         """
         target_handle = None
 
@@ -203,7 +203,7 @@ class BaseWindow(BaseLib):
     def handle(self):
         """Returns the `window handle` of the chrome window.
 
-        :returns: `window handle`
+        :returns: `window handle`.
         """
         return self._handle
 
@@ -218,7 +218,7 @@ class BaseWindow(BaseLib):
     def window(self):
         """Returns the inner DOM window element.
 
-        :returns: DOM window element
+        :returns: DOM window element.
         """
         self.switch_to()
 
@@ -289,9 +289,9 @@ class BaseWindow(BaseLib):
 
         :param callback: Optional, function to trigger the window to open. It is
          triggered with the current :class:`BaseWindow` as parameter.
-         Defaults to `window.open()`
+         Defaults to `window.open()`.
 
-        :param expected_class: Optional, check for the correct window class
+        :param expected_class: Optional, check for the correct window class.
         """
         # Bug 1121698
         # For more stable tests register an observer topic first
@@ -328,20 +328,16 @@ class BaseWindow(BaseLib):
         :param command_key: The key (usually a letter) to be pressed.
 
         :param accel: Optional, If `True`, the `Accel` modifier key is pressed.
-                      This key differs between OS X (`Meta`) and
-                      Linux/Windows (`Ctrl`). Defaults to `False`.
+         This key differs between OS X (`Meta`) and Linux/Windows (`Ctrl`). Defaults to `False`.
 
-        :param alt: Optional, If `True`, the `Alt` modifier key is pressed.
-                    Defaults to `False`.
+        :param alt: Optional, If `True`, the `Alt` modifier key is pressed. Defaults to `False`.
 
-        :param ctrl: Optional, If `True`, the `Ctrl` modifier key is pressed.
-                     Defaults to `False`.
+        :param ctrl: Optional, If `True`, the `Ctrl` modifier key is pressed. Defaults to `False`.
 
-        :param meta: Optional, If `True`, the `Meta` modifier key is pressed.
-                     Defaults to `False`.
+        :param meta: Optional, If `True`, the `Meta` modifier key is pressed. Defaults to `False`.
 
         :param shift: Optional, If `True`, the `Shift` modifier key is pressed.
-                      Defaults to `False`.
+         Defaults to `False`.
         """
 
         platform = self.marionette.session_capabilities['platformName'].lower()
@@ -378,7 +374,7 @@ class BaseWindow(BaseLib):
 
         :param focus: If `True`, the chrome window will be focused.
 
-        :returns: Current window as :class:`BaseWindow` instance
+        :returns: Current window as :class:`BaseWindow` instance.
         """
         if focus:
             self._windows.focus(self.handle)
@@ -481,7 +477,7 @@ class BrowserWindow(BaseWindow):
 
         :param is_private: Optional, if True the new window will be a private browsing one.
 
-        :returns: :class:`BrowserWindow` instance for the new browser window
+        :returns: :class:`BrowserWindow` instance for the new browser window.
         """
         def callback(win):
             # Prepare action which triggers the opening of the browser window
