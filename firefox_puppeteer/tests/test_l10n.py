@@ -26,9 +26,7 @@ class TestL10n(FirefoxTestCase):
         elm = self.marionette.find_element('id', 'helpSafeMode')
         self.assertEqual(value, elm.get_attribute('label'))
 
-        self.assertRaises(MarionetteException,
-                          self.l10n.get_entity,
-                          dtds, 'notExistent')
+        self.assertRaises(MarionetteException, self.l10n.get_entity, dtds, 'notExistent')
 
     # Test navigates between remote and non remote pages (bug 1096488)
     @skip_if_e10s
@@ -52,6 +50,4 @@ class TestL10n(FirefoxTestCase):
         value = self.l10n.get_property(properties, 'NotFound')
         self.assertNotEqual(value, '')
 
-        self.assertRaises(MarionetteException,
-                          self.l10n.get_property,
-                          properties, 'notExistent')
+        self.assertRaises(MarionetteException, self.l10n.get_property, properties, 'notExistent')

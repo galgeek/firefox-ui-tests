@@ -42,8 +42,7 @@ class TestBrowserWindowShortcuts(FirefoxTestCase):
             key = 'searchFocusUnix.commandkey'
         else:
             key = 'searchFocus.commandkey'
-        self.browser.send_shortcut(self.browser.get_entity(key),
-                                   accel=True)
+        self.browser.send_shortcut(self.browser.get_entity(key), accel=True)
 
         # TODO: Check that the right input box is focused
         # Located below searchbar as class="autocomplete-textbox textbox-input"

@@ -464,8 +464,7 @@ class BrowserWindow(BaseWindow):
                 menu = win.marionette.find_element('id', 'menu_closeWindow')
                 menu.click()
             elif trigger == 'shortcut':
-                win.send_shortcut(win.get_entity('closeCmd.key'),
-                                  accel=True, shift=True)
+                win.send_shortcut(win.get_entity('closeCmd.key'), accel=True, shift=True)
             else:
                 raise ValueError('Unknown closing method: "%s"' % trigger)
 
@@ -493,8 +492,7 @@ class BrowserWindow(BaseWindow):
                 menu.click()
             elif trigger == 'shortcut':
                 cmd_key = 'privateBrowsingCmd.commandkey' if is_private else 'newNavigatorCmd.key'
-                win.send_shortcut(win.get_entity(cmd_key),
-                                  accel=True, shift=is_private)
+                win.send_shortcut(win.get_entity(cmd_key), accel=True, shift=is_private)
             else:
                 raise ValueError('Unknown opening method: "%s"' % trigger)
 
