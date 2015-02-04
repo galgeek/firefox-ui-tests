@@ -34,5 +34,5 @@ script:
 notifications:
 #      email:
 #          - dev-automation@lists.mozilla.org
-    irc:
-        - "irc.mozilla.org#automation"
+#    irc:
+#        - "irc.mozilla.org#automation"
