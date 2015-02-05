@@ -3,11 +3,16 @@ language: c
 os:
     - osx
     - linux
-    
-env: DISPLAY=:99 MOZ_XVFB=1
+
+compiler:
+    - gcc
 
 install:
     - ./.travis/install.sh
+
+before_script:
+    # Run pep8 on all except the checked out marionette-client folder
+    - pep8 --max-line-length=99 --exclude=client .
 
 script:
     - ./.travis/run.sh
@@ -19,10 +24,6 @@ notifications:
         - "irc.mozilla.org#automation"
 
 matrix:
+    # allow failure on osx while we get familiar with multi-os
     allow_failures:
       - os: osx
-    exclude:
-      - os: linux
-        compiler: clang
-      - os: osx
-        compiler: gcc
