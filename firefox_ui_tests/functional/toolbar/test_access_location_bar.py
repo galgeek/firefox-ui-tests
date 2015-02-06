@@ -5,6 +5,7 @@
 from marionette import By
 
 from firefox_puppeteer.api.keys import Keys
+from firefox_puppeteer.api.places import Places
 from firefox_puppeteer.ui.windows import BrowserWindow
 from firefox_ui_harness.decorators import skip_under_xvfb
 from firefox_ui_harness.testcase import FirefoxTestCase
@@ -14,17 +15,11 @@ class TestAccessLocationBar(FirefoxTestCase):
 
     def setUp(self):
         FirefoxTestCase.setUp(self)
-
-        # To prepare for tests, open new browser window,
-        self.browser.open_window()
         self.location_bar = self.browser.navbar.locationbar
         self.url_bar = self.location_bar.urlbar
 
         # Purge history
-        self.marionette.execute_script("""
-            let count = gBrowser.sessionHistory.count;
-            gBrowser.sessionHistory.PurgeHistory(count);
-        """)
+        self.places.remove_all_history()
 
         # Navigate to several urls in order to populate history
         self.test_urls = [
@@ -73,14 +68,12 @@ class TestAccessLocationBar(FirefoxTestCase):
 
         # Verify that selected item populates location bar with url
         def check_url_from_selection(mn):
-            self.page_title_before = self.marionette.execute_script("return document.title;")
-            return self.location_bar.value != self.location_bar_value_before
+            return self.location_bar.value == self.marionette.absolute_url('layout/mozilla.html')
         self.wait_for_condition(check_url_from_selection)
         self.url_bar.send_keys(Keys.ENTER)
 
         # Verify that selected url is loaded by verifying the title of the page has changed
         def check_title(mn):
             self.new_page_title = self.marionette.execute_script("return document.title;")
-            return self.new_page_title != self.page_title_before
+            return self.new_page_title == 'Mozilla'
         self.wait_for_condition(check_title)
-        self.windows.close_all(self.browser)
