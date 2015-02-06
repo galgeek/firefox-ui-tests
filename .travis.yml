@@ -7,12 +7,31 @@ os:
 compiler:
     - gcc
 
+before_install:
+    # set up linux only items
+    - ./.travis/preinstall.sh
+
+    - sudo -H pip install virtualenv
+    - virtualenv ~/.venv
+    - source ~/.venv/bin/activate
+
 install:
-    - ./.travis/install.sh
+    # As long as we have invasive changes, lets get the trunk version of marionette-client
+    - svn checkout https://github.com/mozilla/gecko-dev/trunk/testing/marionette/client
+    - "cd client && sudo python setup.py develop && cd .."
+
+    - sudo python setup.py develop
+    - pip install mozdownload pep8
 
 before_script:
     # Run pep8 on all except the checked out marionette-client folder
     - pep8 --max-line-length=99 --exclude=client .
+
+    # Download Firefox Nightly which is compatible with the Marionette client version used 
+    - mozdownload -t daily
+
+    # install Firefox Nightly per os
+    - ./.travis/install.sh
 
 script:
     - ./.travis/run.sh
@@ -23,7 +42,6 @@ notifications:
     irc:
         - "irc.mozilla.org#automation"
 
-matrix:
-    # allow failure on osx while we get familiar with multi-os
-    allow_failures:
-      - os: osx
+# matrix:
+#    allow_failures:
+#      - os: linux
