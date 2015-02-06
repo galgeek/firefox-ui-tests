@@ -23,7 +23,11 @@ class TestEscapeAutocomplete(FirefoxTestCase):
         self.test_urls = [self.marionette.absolute_url(t)
                           for t in self.test_urls]
 
-        self.places.wait_for_visited(self.test_urls)
+        def load_urls():
+            with self.marionette.using_context('content'):
+                for url in self.test_urls:
+                    self.marionette.navigate(url)
+        self.places.wait_for_visited(self.test_urls, load_urls)
 
     @skip_under_xvfb
     def test_escape_autocomplete(self):
