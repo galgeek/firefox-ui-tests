@@ -7,9 +7,9 @@ before_install:
     # set up linux only items
     - ./.travis/preinstall.sh
 
-    - sudo -H pip install virtualenv
-    - virtualenv ~/.venv
-    - source ~/.venv/bin/activate
+#    - sudo -H pip install virtualenv
+#    - virtualenv ~/.venv
+#    - source ~/.venv/bin/activate
 
 install:
     # As long as we have invasive changes, lets get the trunk version of marionette-client
