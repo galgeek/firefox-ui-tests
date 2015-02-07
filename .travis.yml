@@ -14,7 +14,7 @@ before_install:
 install:
     # As long as we have invasive changes, lets get the trunk version of marionette-client
     - svn checkout https://github.com/mozilla/gecko-dev/trunk/testing/marionette/client
-    - "cd client && sudo python setup.py develop && cd .."
+    - "cd client && python setup.py develop && cd .."
 
     - sudo python setup.py develop
     - pip install mozdownload pep8
