@@ -1,11 +1,7 @@
-language: c
+language: python
 
-os:
-    - osx
-    - linux
-
-compiler:
-    - gcc
+python:
+    - 2.7
 
 before_install:
     # set up linux only items
