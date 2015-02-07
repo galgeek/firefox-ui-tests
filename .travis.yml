@@ -18,6 +18,7 @@ install:
 
     - python setup.py develop
     - pip install mozdownload pep8
+    - pip --version
 
 before_script:
     # Run pep8 on all except the checked out marionette-client folder
