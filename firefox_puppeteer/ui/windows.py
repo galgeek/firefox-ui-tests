@@ -22,7 +22,7 @@ class Windows(BaseLib):
         """Retrieves a list of all open chrome windows.
 
         :returns: List of :class:`BaseWindow` instances corresponding to the
-                  windows in ``marionette.chrome_window_handles``.
+                  windows in `marionette.chrome_window_handles`.
         """
         return [self.create_window_instance(handle) for handle in
                 self.marionette.chrome_window_handles]
@@ -66,7 +66,7 @@ class Windows(BaseLib):
         There is an optional `exceptions` list, which can be used to exclude
         specific chrome windows from being closed.
 
-        :param exceptions: Optional, list of :class:`BaseWindow` instances not to close
+        :param exceptions: Optional, list of :class:`BaseWindow` instances not to close.
         """
         windows_to_keep = exceptions or []
 
@@ -125,7 +125,7 @@ class Windows(BaseLib):
     def switch_to(self, target):
         """Switches context to the specified chrome window.
 
-        :param target: The window to switch to. ``target`` can be a `handle` or a
+        :param target: The window to switch to. `target` can be a `handle` or a
                        callback that returns True in the context of the desired
                        window.
 
@@ -370,7 +370,7 @@ class BaseWindow(BaseLib):
         """Switches the context to this chrome window.
 
         By default it will not focus the window. If that behavior is wanted, the
-        ``focus`` parameter can be used.
+        `focus` parameter can be used.
 
         :param focus: If `True`, the chrome window will be focused.
 
@@ -430,8 +430,7 @@ class BrowserWindow(BaseWindow):
 
     @property
     def tabbar(self):
-        """Provides access to the tab bar. This is the toolbar containing all the
-        tabs, the new tab button, and the tab menu.
+        """Provides access to the tab bar.
 
         See the :class:`~ui.tabbar.TabBar` reference.
         """
@@ -447,8 +446,8 @@ class BrowserWindow(BaseWindow):
         """Closes the current browser window by using the specified trigger.
 
         :param trigger: Optional, method to close the current browser window. This can
-         be a string with one of ``menu`` or ``shortcut``, or a callback which gets triggered
-         with the current :class:`BrowserWindow` as parameter. Defaults to ``menu``.
+         be a string with one of `menu` or `shortcut`, or a callback which gets triggered
+         with the current :class:`BrowserWindow` as parameter. Defaults to `menu`.
 
         :param force: Optional, forces the closing of the window by using the Gecko API.
          Defaults to `False`.
