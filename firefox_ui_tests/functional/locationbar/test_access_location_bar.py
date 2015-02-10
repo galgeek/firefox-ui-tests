@@ -15,7 +15,6 @@ class TestAccessLocationBar(FirefoxTestCase):
         self.location_bar = self.browser.navbar.locationbar
         self.url_bar = self.location_bar.urlbar
 
-
     @skip_under_xvfb
     def test_access_location_bar_history(self):
         # Purge history
@@ -51,7 +50,8 @@ class TestAccessLocationBar(FirefoxTestCase):
         self.wait_for_condition(lambda _: self.location_bar.autocomplete_results.is_open)
 
         # Verify that results are displayed in autocomplete
-        self.wait_for_condition(lambda _: len(self.location_bar.autocomplete_results.visible_results) > 1)
+        self.results_length = len(self.location_bar.autocomplete_results.visible_results)
+        self.wait_for_condition(lambda _: self.results_length > 1)
 
         # Arrow down again to select first item in list
         self.url_bar.send_keys(self.keys.ARROW_DOWN)
@@ -59,12 +59,12 @@ class TestAccessLocationBar(FirefoxTestCase):
         # Verify that first item in list is selected
         def auto_complete_selected_item(mn):
             # TODO: update to 'visible_results' when 'selected_index' property exists
-            self.results = self.location_bar.autocomplete_results.results 
+            self.results = self.location_bar.autocomplete_results.results
             return self.results.get_attribute('selectedIndex') == '0'
         self.wait_for_condition(auto_complete_selected_item)
 
         # Verify that selected item populates location bar with url
-        self.assertEqual(self.location_bar.value, self.marionette.absolute_url('layout/mozilla_mission.html'))
+        self.assertIn('mozilla_mission', self.location_bar.value)
 
         # Navigate to the currently selected url
         self.url_bar.send_keys(self.keys.ENTER)
