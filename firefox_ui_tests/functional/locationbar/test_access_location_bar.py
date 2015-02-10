@@ -4,9 +4,6 @@
 
 from marionette import By
 
-from firefox_puppeteer.api.keys import Keys
-from firefox_puppeteer.api.places import Places
-from firefox_puppeteer.ui.windows import BrowserWindow
 from firefox_ui_harness.decorators import skip_under_xvfb
 from firefox_ui_harness.testcase import FirefoxTestCase
 
@@ -18,14 +15,17 @@ class TestAccessLocationBar(FirefoxTestCase):
         self.location_bar = self.browser.navbar.locationbar
         self.url_bar = self.location_bar.urlbar
 
+
+    @skip_under_xvfb
+    def test_access_location_bar_history(self):
         # Purge history
         self.places.remove_all_history()
 
         # Navigate to several urls in order to populate history
         self.test_urls = [
             'layout/mozilla_projects.html',
-            'layout/mozilla_mission.html',
-            'layout/mozilla.html']
+            'layout/mozilla.html',
+            'layout/mozilla_mission.html']
         self.test_urls = [self.marionette.absolute_url(t)
                           for t in self.test_urls]
 
@@ -34,46 +34,43 @@ class TestAccessLocationBar(FirefoxTestCase):
 
         with self.marionette.using_context('content'):
             self.marionette.navigate('about:blank')
-
-    @skip_under_xvfb
-    def test_access_location_bar_history(self):
         # Need to blur url bar or autocomplete won't load - bug 1038614
-        self.marionette.execute_script("arguments[0].blur();", script_args=[self.url_bar])
+        self.marionette.execute_script("""arguments[0].blur();""", script_args=[self.url_bar])
 
         # Clear contents of url bar to focus
         self.location_bar.clear()
 
-        # Arrow down to navigate list of visited sites
-        self.url_bar.send_keys(Keys.ARROW_DOWN)
+        # Arrow down to navigate list of visited sites.
+        # They should appear in this order:
+        # layout/mozilla_mission.html
+        # layout/mozilla.html
+        # layout/mozilla_projects.html
+        self.url_bar.send_keys(self.keys.ARROW_DOWN)
 
         # Verify that autocomplete is open
-        def auto_complete_open(mn):
-            return self.location_bar.autocomplete_results.is_open
-        self.wait_for_condition(auto_complete_open)
+        self.wait_for_condition(lambda _: self.location_bar.autocomplete_results.is_open)
 
         # Verify that results are displayed in autocomplete
-        def auto_complete_results(mn):
-            self.location_bar_value_before = self.location_bar.value
-            return len(self.location_bar.autocomplete_results.visible_results) > 1
-        self.wait_for_condition(auto_complete_results)
+        self.wait_for_condition(lambda _: len(self.location_bar.autocomplete_results.visible_results) > 1)
 
         # Arrow down again to select first item in list
-        self.url_bar.send_keys(Keys.ARROW_DOWN)
+        self.url_bar.send_keys(self.keys.ARROW_DOWN)
 
         # Verify that first item in list is selected
         def auto_complete_selected_item(mn):
-            self.results = self.location_bar.autocomplete_results.results
+            # TODO: update to 'visible_results' when 'selected_index' property exists
+            self.results = self.location_bar.autocomplete_results.results 
             return self.results.get_attribute('selectedIndex') == '0'
         self.wait_for_condition(auto_complete_selected_item)
 
         # Verify that selected item populates location bar with url
-        def check_url_from_selection(mn):
-            return self.location_bar.value == self.marionette.absolute_url('layout/mozilla.html')
-        self.wait_for_condition(check_url_from_selection)
-        self.url_bar.send_keys(Keys.ENTER)
+        self.assertEqual(self.location_bar.value, self.marionette.absolute_url('layout/mozilla_mission.html'))
 
-        # Verify that selected url is loaded by verifying the title of the page has changed
+        # Navigate to the currently selected url
+        self.url_bar.send_keys(self.keys.ENTER)
+
+        # Verify that selected url is loaded by verifying the title of the page
         def check_title(mn):
-            self.new_page_title = self.marionette.execute_script("return document.title;")
-            return self.new_page_title == 'Mozilla'
+            self.new_page_title = self.marionette.execute_script("""return document.title;""")
+            return self.new_page_title == 'Mozilla Mission'
         self.wait_for_condition(check_title)
