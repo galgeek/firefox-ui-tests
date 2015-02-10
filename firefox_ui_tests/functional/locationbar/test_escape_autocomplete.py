@@ -10,10 +10,10 @@ class TestEscapeAutocomplete(FirefoxTestCase):
 
     def tearDown(self):
         autocompleteresults = self.browser.navbar.locationbar.autocomplete_results
-        
+
         if autocompleteresults.is_open:
             autocompleteresults.close(force=True)
-            self.wait_for_condition(lambda _: autocompleteresults.is_open == False)
+            self.wait_for_condition(not autocompleteresults.is_open)
 
         FirefoxTestCase.tearDown(self)
 
