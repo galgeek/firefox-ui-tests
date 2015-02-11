@@ -24,10 +24,10 @@ class TestEscapeAutocomplete(FirefoxTestCase):
         self.test_string = 'mozilla'
 
         self.locationbar = self.browser.navbar.locationbar
-        self.autocompleteresults = self.locationbar.autocomplete_results
+        self.autocomplete_results = self.locationbar.autocomplete_results
 
     def tearDown(self):
-        self.autocompleteresults.close(force=True)
+        self.autocomplete_results.close(force=True)
         FirefoxTestCase.tearDown(self)
 
     @skip_under_xvfb
@@ -44,12 +44,12 @@ class TestEscapeAutocomplete(FirefoxTestCase):
         self.locationbar.clear()
         self.locationbar.urlbar.send_keys(self.test_string)
         self.assertEqual(self.locationbar.value, self.test_string)
-        self.wait_for_condition(lambda _: self.autocompleteresults.is_open)
+        self.wait_for_condition(lambda _: self.autocomplete_results.is_open)
 
         # Press escape, check location bar value, check autocomplete list closed
         self.locationbar.urlbar.send_keys(self.keys.ESCAPE)
         self.assertEqual(self.locationbar.value, self.test_string)
-        self.wait_for_condition(lambda _: not self.autocompleteresults.is_open)
+        self.wait_for_condition(lambda _: not self.autocomplete_results.is_open)
 
         # Press escape again and check that locationbar returns to the page url
         self.locationbar.urlbar.send_keys(self.keys.ESCAPE)
