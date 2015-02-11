@@ -1,18 +1,26 @@
-language: python
+language: c
 
-python:
-    - 2.7
+os:
+    - osx
+    - linux
 
-env: DISPLAY=:99 MOZ_XVFB=1
+compiler:
+    - gcc
+
+env:
+    - DISPLAY=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo ':99'; fi)
+      MOZ_XVFB=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo 1; fi)
+      BINARY=$(if [[ $TRAVIS_OS_NAME = 'osx' ]]; then echo '/Applications/FirefoxNightly.app/Contents/MacOS/firefox'; else echo 'firefox/firefox'; fi)
 
 before_install:
-    - sudo apt-get update
-    - "/sbin/start-stop-daemon --start --quiet --make-pidfile --pidfile /tmp/custom_xvfb_99.pid --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1024x768x24"
+    # set up linux only items
+    - ./.travis/before_install.sh
+
+    - virtualenv ~/.venv
+    - source ~/.venv/bin/activate
 
 install:
-    - sudo apt-get install flashplugin-nonfree subversion
-
-    # As long as we have invasive changes lets get the trunk version of marionette-client
+    # As long as we have invasive changes, lets get the trunk version of marionette-client
     - svn checkout https://github.com/mozilla/gecko-dev/trunk/testing/marionette/client
     - "cd client && python setup.py develop && cd .."
 
@@ -23,16 +31,15 @@ before_script:
     # Run pep8 on all except the checked out marionette-client folder
     - pep8 --max-line-length=99 --exclude=client .
 
-    # Download Firefox Nightly which is compatible with the used version of
-    # marionette client
-    - mozdownload -t daily
-    - tar -xvf *firefox*.tar.bz2
+    # install Firefox Nightly per os
+    - ./.travis/before_script.sh
 
 script:
-    - firefox-ui-tests --binary firefox/firefox
+    #- ./.travis/run.sh
+    - firefox-ui-tests --binary $BINARY
 
 notifications:
 #      email:
 #          - dev-automation@lists.mozilla.org
-    irc:
-        - "irc.mozilla.org#automation"
+#    irc:
+#        - "irc.mozilla.org#automation"
