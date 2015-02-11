@@ -30,7 +30,8 @@ class TestAccessLocationBar(FirefoxTestCase):
         self.urlbar = self.locationbar.urlbar
 
     def tearDown(self):
-        self.autocomplete_results.close(force=True)
+
+        # self.autocomplete_results.close(force=True)
         FirefoxTestCase.tearDown(self)
 
     @skip_under_xvfb
