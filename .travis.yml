@@ -7,6 +7,11 @@ os:
 compiler:
     - gcc
 
+env:
+    - DISPLAY=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo ':99'; fi)
+      MOZ_XVFB=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo 1; fi)
+      BINARY=$(if [[ $TRAVIS_OS_NAME = 'osx' ]]; then echo '/Applications/FirefoxNightly.app/Contents/MacOS/firefox'; else echo 'firefox/firefox'; fi)
+
 before_install:
     # set up linux only items
     - ./.travis/before_install.sh
@@ -17,9 +22,9 @@ before_install:
 install:
     # As long as we have invasive changes, lets get the trunk version of marionette-client
     - svn checkout https://github.com/mozilla/gecko-dev/trunk/testing/marionette/client
-    - "cd client && sudo python setup.py develop && cd .."
+    - "cd client && python setup.py develop && cd .."
 
-    - sudo python setup.py develop
+    - python setup.py develop
     - pip install mozdownload pep8
 
 before_script:
@@ -30,14 +35,11 @@ before_script:
     - ./.travis/before_script.sh
 
 script:
-    - ./.travis/run.sh
+    #- ./.travis/run.sh
+    - firefox-ui-tests --binary $BINARY
 
 notifications:
 #      email:
 #          - dev-automation@lists.mozilla.org
-#    irc:
-#        - "irc.mozilla.org#automation"
-
-# matrix:
-#    allow_failures:
-#      - os: linux
+    irc:
+        - "irc.mozilla.org#automation"
