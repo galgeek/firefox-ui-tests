@@ -10,7 +10,7 @@ compiler:
 env:
     - DISPLAY=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo ':99'; fi)
       MOZ_XVFB=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo 1; fi)
-      BINARY=$(if [[ $TRAVIS_OS_NAME = 'osx' ]]; then echo '/Applications/FirefoxNightly.app/Contents/MacOS/firefox'; else echo 'firefox/firefox'; fi)
+      BINARY=$(if [[ $TRAVIS_OS_NAME = 'osx' ]]; then echo 'FirefoxNightly.app/Contents/MacOS/firefox'; else echo 'firefox/firefox'; fi)
 
 before_install:
     - ./.travis/before_install.sh
@@ -30,7 +30,6 @@ before_script:
     # Run pep8 on all except the checked out marionette-client folder
     - pep8 --max-line-length=99 --exclude=client .
 
-    #- ./.travis/before_script.sh
     - mozdownload -t daily
     - mozinstall *-firefox-*
 
