@@ -32,7 +32,6 @@ class TestEscapeAutocomplete(FirefoxTestCase):
 
     @skip_under_xvfb
     def test_escape_autocomplete(self):
-
         # Open some local pages
         def load_urls():
             with self.marionette.using_context('content'):
