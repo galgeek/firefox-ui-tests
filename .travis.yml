@@ -30,7 +30,7 @@ before_script:
     # Run pep8 on all except the checked out marionette-client folder
     - pep8 --max-line-length=99 --exclude=client .
 
-    - mozdownload -t daily
+    - "cd && mozdownload -t daily"
     - mozinstall *-firefox-*
 
 script:
