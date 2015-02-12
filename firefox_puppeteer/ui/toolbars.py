@@ -245,13 +245,14 @@ class AutocompleteResults(BaseLib):
         :param force: If true, the popup is closed by its own hide function,
                       otherwise a key event is sent to close the popup.
         """
+        if not self.is_open:
+            return
+
         if force:
             self.marionette.execute_script("""
               arguments[0].hidePopup();
             """, script_args=[self.popup])
         else:
-            if not self.is_open:
-                return
             (self.marionette.find_element('id', 'urlbar')
                             .send_keys(Keys.ESCAPE))
         Wait(self.marionette).until(
