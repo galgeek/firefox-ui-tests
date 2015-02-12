@@ -21,7 +21,6 @@ class TestAccessLocationBar(FirefoxTestCase):
         ]
         self.test_urls = [self.marionette.absolute_url(t)
                           for t in self.test_urls]
-        self.test_urls.append('about:blank')
 
         self.locationbar = self.browser.navbar.locationbar
         self.autocomplete_results = self.locationbar.autocomplete_results
@@ -36,26 +35,25 @@ class TestAccessLocationBar(FirefoxTestCase):
                 for url in self.test_urls:
                     self.marionette.navigate(url)
         self.places.wait_for_visited(self.test_urls, load_urls)
+        with self.marionette.using_context('content'):
+            self.marionette.navigate('about:blank')
+        # Need to blur url bar or autocomplete won't load - bug 1038614
+        self.marionette.execute_script("""arguments[0].blur();""", script_args=[self.urlbar])
 
         # Clear contents of url bar to focus, then arrow down for list of visited sites
         # Verify that autocomplete is open and results are displayed
         self.locationbar.clear()
-        # type key to force autocomplete results to load; Bug 1038614 blur failing OS X 10.10.2
-        self.urlbar.send_keys('1')
         self.urlbar.send_keys(self.keys.ARROW_DOWN)
         self.wait_for_condition(lambda _: self.autocomplete_results.is_open)
         self.wait_for_condition(lambda _: len(self.autocomplete_results.visible_results) > 1)
 
-        # Arrow down again to select first item in list, which should appear in this order:
-        #   layout/mozilla_mission.html
-        #   layout/mozilla.html
-        #   layout/mozilla_projects.html
-        # Verify first item is selected and selected item populates location bar with url
+        # Arrow down again to select first item in list, appearing in reversed order, as loaded.
+        # Verify first item.
         self.urlbar.send_keys(self.keys.ARROW_DOWN)
         self.wait_for_condition(lambda _: self.autocomplete_results.selected_index == '0')
-        self.assertIn('mozilla_mission', self.locationbar.value)
+        self.assertIn('mission', self.locationbar.value)
 
         # Navigate to the currently selected url
         # Verify it loads by comparing the page url to the test url
         self.urlbar.send_keys(self.keys.ENTER)
-        self.assertEqual(self.locationbar.value, self.test_urls[2])
+        self.assertEqual(self.locationbar.value, self.test_urls[-1])

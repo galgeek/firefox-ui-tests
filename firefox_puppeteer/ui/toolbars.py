@@ -333,8 +333,9 @@ class AutocompleteResults(BaseLib):
 
     @property
     def selected_index(self):
-        """
-        :returns: The index of the selected autocomplete result.
+        """Provides the index of the selected item in the autocomplete list.
+
+        :returns: The index.
         """
         return self.results.get_attribute('selectedIndex')
 
