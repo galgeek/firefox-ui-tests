@@ -27,6 +27,8 @@ class TestEscapeAutocomplete(FirefoxTestCase):
         self.autocomplete_results = self.locationbar.autocomplete_results
 
     def tearDown(self):
+        # workaround for marionette bug leaving us in 'content' context here
+        self.marionette.set_context('chrome')
         self.autocomplete_results.close(force=True)
         FirefoxTestCase.tearDown(self)
 
