@@ -5,6 +5,8 @@ os:
     - linux
 
 compiler:
+    # we don't require a C compiler! if we don't specify one here, we get extra builds,
+    # for both gcc and clang
     - gcc
 
 env:
@@ -30,6 +32,7 @@ before_script:
     # Run pep8 on all except the checked out marionette-client folder
     - pep8 --max-line-length=99 --exclude=client .
 
+    # Download Firefox Nightly, which is compatible with the Marionette client version used
     - "cd && mozdownload -t daily"
     - mozinstall *-firefox-*
 
@@ -37,7 +40,7 @@ script:
     - firefox-ui-tests --binary $BINARY
 
 notifications:
-#      email:
-#          - dev-automation@lists.mozilla.org
+    email:
+        - dev-automation@lists.mozilla.org
     irc:
         - "irc.mozilla.org#automation"
