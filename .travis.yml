@@ -13,7 +13,6 @@ env:
       BINARY=$(if [[ $TRAVIS_OS_NAME = 'osx' ]]; then echo '/Applications/FirefoxNightly.app/Contents/MacOS/firefox'; else echo 'firefox/firefox'; fi)
 
 before_install:
-    # set up linux only items
     - ./.travis/before_install.sh
 
     - virtualenv ~/.venv
@@ -25,17 +24,17 @@ install:
     - "cd client && python setup.py develop && cd .."
 
     - python setup.py develop
-    - pip install mozdownload pep8
+    - pip install mozdownload mozinstall pep8
 
 before_script:
     # Run pep8 on all except the checked out marionette-client folder
     - pep8 --max-line-length=99 --exclude=client .
 
-    # install Firefox Nightly per os
-    - ./.travis/before_script.sh
+    #- ./.travis/before_script.sh
+    - mozdownload -t daily
+    - mozinstall *firefox*
 
 script:
-    #- ./.travis/run.sh
     - firefox-ui-tests --binary $BINARY
 
 notifications:
