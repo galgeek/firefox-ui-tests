@@ -32,7 +32,7 @@ before_script:
 
     #- ./.travis/before_script.sh
     - mozdownload -t daily
-    - mozinstall *firefox*
+    - mozinstall *-firefox-*
 
 script:
     - firefox-ui-tests --binary $BINARY
