@@ -6,6 +6,7 @@ from firefox_ui_harness.decorators import skip_under_xvfb
 from firefox_ui_harness.testcase import FirefoxTestCase
 
 
+@skip_under_xvfb
 class TestAccessLocationBar(FirefoxTestCase):
 
     def setUp(self):
@@ -26,7 +27,6 @@ class TestAccessLocationBar(FirefoxTestCase):
         self.autocomplete_results = self.locationbar.autocomplete_results
         self.urlbar = self.locationbar.urlbar
 
-    @skip_under_xvfb
     def test_access_locationbar_history(self):
 
         # Open some local pages, then about:blank
@@ -37,6 +37,7 @@ class TestAccessLocationBar(FirefoxTestCase):
         self.places.wait_for_visited(self.test_urls, load_urls)
         with self.marionette.using_context('content'):
             self.marionette.navigate('about:blank')
+
         # Need to blur url bar or autocomplete won't load - bug 1038614
         self.marionette.execute_script("""arguments[0].blur();""", script_args=[self.urlbar])
 
