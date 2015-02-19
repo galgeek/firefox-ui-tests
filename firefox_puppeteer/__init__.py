@@ -47,6 +47,14 @@ class Puppeteer(object):
         See the :class:`~api.keys.Keys` reference.
         """
 
+    @use_class_as_property('api.permissions.Permissions')
+    def perms(self):
+        """
+        Provides an api for interacting with permissions.
+
+        See the :class:`~api.permissions.Permissions` reference.
+        """
+
     @use_class_as_property('api.places.Places')
     def places(self):
         """Provides low-level access to several bookmark and history related actions.
