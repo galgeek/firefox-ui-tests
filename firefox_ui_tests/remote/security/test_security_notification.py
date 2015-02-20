@@ -15,7 +15,7 @@ class TestSecurityNotification(FirefoxTestCase):
     def setUp(self):
         FirefoxTestCase.setUp(self)
 
-        self.test_data = [
+        self.urls = [
             # Invalid cert page
             'https://summitbook.mozilla.org',
             # Secure page
@@ -26,24 +26,17 @@ class TestSecurityNotification(FirefoxTestCase):
 
         self.identity_box = self.browser.navbar.locationbar.identity_popup.box
 
-    def tearDown(self):
-        try:
-            self.windows.close_all([self.browser])
-        finally:
-            FirefoxTestCase.tearDown(self)
-
     def test_security_notification(self):
-
         # Go to a secure (https) site
         with self.marionette.using_context('content'):
-            self.marionette.navigate(self.test_data[1])
+            self.marionette.navigate(self.urls[1])
 
         self.wait_for_condition(lambda _: self.identity_box.get_attribute('className') ==
                                 'verifiedIdentity')
 
         # Go to an insecure (http) site
         with self.marionette.using_context('content'):
-            self.marionette.navigate(self.test_data[2])
+            self.marionette.navigate(self.urls[2])
 
         self.wait_for_condition(lambda _: self.identity_box.get_attribute('className') ==
                                 'unknownIdentity')
@@ -51,19 +44,18 @@ class TestSecurityNotification(FirefoxTestCase):
         self.marionette.set_context('content')
 
         # Go to a site that has an invalid (expired) cert
-        self.assertRaises(MarionetteException, self.marionette.navigate, self.test_data[0])
+        self.assertRaises(MarionetteException, self.marionette.navigate, self.urls[0])
 
         # Wait for about:error page
         time.sleep(1)
 
         # Verify the text in Technical Content contains the page with invalid cert
-        text = (self.marionette.find_element(By.ID, 'technicalContentText')).get_attribute(
-            'textContent')
-        self.assertTrue(self.test_data[0][8:] in text)
+        text = self.marionette.find_element(By.ID, 'technicalContentText')
+        self.assertIn(self.urls[0][8:], text.get_attribute('textContent'))
 
         # Verify the "Get Me Out Of Here!" and "Add Exception" buttons appear
         self.assertIsNotNone(self.marionette.find_element(By.ID, 'getMeOutOfHereButton'))
         self.assertIsNotNone(self.marionette.find_element(By.ID, 'exceptionDialogButton'))
 
         # Verify the error code is correct
-        self.assertTrue('sec_error_expired_certificate' in text)
+        self.assertIn('sec_error_expired_certificate', text.get_attribute('textContent'))
