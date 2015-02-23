@@ -41,21 +41,20 @@ class TestSecurityNotification(FirefoxTestCase):
         self.wait_for_condition(lambda _: self.identity_box.get_attribute('className') ==
                                 'unknownIdentity')
 
-        self.marionette.set_context('content')
+        with self.marionette.using_context('content'):
+            # Go to a site that has an invalid (expired) cert
+            self.assertRaises(MarionetteException, self.marionette.navigate, self.urls[0])
 
-        # Go to a site that has an invalid (expired) cert
-        self.assertRaises(MarionetteException, self.marionette.navigate, self.urls[0])
+            # Wait for the DOM to receive events
+            time.sleep(1)
 
-        # Wait for about:error page
-        time.sleep(1)
+            # Verify the text in Technical Content contains the page with invalid cert
+            text = self.marionette.find_element(By.ID, 'technicalContentText')
+            self.assertIn(self.urls[0][8:], text.get_attribute('textContent'))
 
-        # Verify the text in Technical Content contains the page with invalid cert
-        text = self.marionette.find_element(By.ID, 'technicalContentText')
-        self.assertIn(self.urls[0][8:], text.get_attribute('textContent'))
+            # Verify the "Get Me Out Of Here!" and "Add Exception" buttons appear
+            self.assertIsNotNone(self.marionette.find_element(By.ID, 'getMeOutOfHereButton'))
+            self.assertIsNotNone(self.marionette.find_element(By.ID, 'exceptionDialogButton'))
 
-        # Verify the "Get Me Out Of Here!" and "Add Exception" buttons appear
-        self.assertIsNotNone(self.marionette.find_element(By.ID, 'getMeOutOfHereButton'))
-        self.assertIsNotNone(self.marionette.find_element(By.ID, 'exceptionDialogButton'))
-
-        # Verify the error code is correct
-        self.assertIn('sec_error_expired_certificate', text.get_attribute('textContent'))
+            # Verify the error code is correct
+            self.assertIn('sec_error_expired_certificate', text.get_attribute('textContent'))
