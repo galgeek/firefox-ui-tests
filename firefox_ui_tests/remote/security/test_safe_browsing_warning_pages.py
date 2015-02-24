@@ -15,7 +15,7 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
     def setUp(self):
         FirefoxTestCase.setUp(self)
 
-        self.test_data = [
+        self.urls = [
             # Phishing URL
             "https://www.itisatrap.org/firefox/its-a-trap.html",
             # Malware URL
@@ -38,20 +38,20 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
             FirefoxTestCase.tearDown(self)
 
     def test_warning_pages(self):
-        self.marionette.set_context("content")
-        for unsafe_page in self.test_data:
-            # Load a test page and test the get me out button
-            self.marionette.navigate(unsafe_page)
-            self.check_get_me_out_of_here_button(unsafe_page)
+        with self.marionette.using_context("content"):
+            for unsafe_page in self.urls:
+                # Load a test page and test the get me out button
+                self.marionette.navigate(unsafe_page)
+                self.check_get_me_out_of_here_button(unsafe_page)
 
-            # Load the test page again and test the report button
-            self.marionette.navigate(unsafe_page)
+                # Load the test page again and test the report button
+                self.marionette.navigate(unsafe_page)
 
-            self.check_report_button(unsafe_page)
+                self.check_report_button(unsafe_page)
 
-            # Load the test page again and test the ignore warning button
-            self.marionette.navigate(unsafe_page)
-            self.check_ignore_warning_button(unsafe_page)
+                # Load the test page again and test the ignore warning button
+                self.marionette.navigate(unsafe_page)
+                self.check_ignore_warning_button(unsafe_page)
 
     def check_get_me_out_of_here_button(self, unsafe_page):
         get_me_out_of_here_button = self.marionette.find_element(By.ID, "getMeOutButton")
@@ -71,27 +71,29 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
         time.sleep(1)
         report_button.click()
 
-        # mozmill: locale = prefs.getPref("general.useragent.locale", "");
-        # self.marionette.set_context('chrome')
-        if 'its-a-trap' in unsafe_page:
-            # mozmill: utils.formatUrlPref("app.support.baseURL")
-            # + "phishing-malware"
-            # url = self.marionette.execute_script("""
-            #    Cu.import("resource://gre/modules/Services.jsm");
-            #    return Services.urlFormatter.formatURLPref('app.support.baseURL');
-            #    """) + "phishing-malware"
-            url_string = "phishing-and-malware"
+        with self.marionette.using_context('chrome'):  # required by execute_script
+            if 'its-a-trap' in unsafe_page:
+                # mozmill: utils.formatUrlPref("app.support.baseURL") + "phishing-malware"
+                # the code commented out below produces this:
+                # https://support.mozilla.org/1/firefox/38.0a1/Darwin/en-US/phishing-malware
+                # which fails to match the page we're sent to...
+                # url = self.marionette.execute_script("""
+                #    Cu.import("resource://gre/modules/Services.jsm");
+                #    locale = Services.prefs.getCharPref("general.useragent.locale", "");
+                #    return (Services.urlFormatter.formatURLPref("app.support.baseURL")
+                #                                               + "phishing-malware");
+                #    """)
+                url = 'https://support.mozilla.org'
 
-        else:
-            # mozmill: utils.formatUrlPref("browser.safebrowsing.malware.reportURL")
-            # + unsafe_page;
-            # url = self.marionette.execute_script("""
-            #    Cu.import("resource://gre/modules/Services.jsm");
-            #    return Services.urlFormatter.formatURLPref('app.support.baseURL');
-            #    """) + unsafe_page
-            url_string = "safebrowsing.google.com/safebrowsing/diagnostic"
+            else:
+                url = self.marionette.execute_script("""
+                   Cu.import("resource://gre/modules/Services.jsm");
+                   locale = Services.prefs.getCharPref("general.useragent.locale", "");
+                   return (Services.urlFormatter.formatURLPref(
+                            "browser.safebrowsing.malware.reportURL") + arguments[0]);
+                   """, script_args=[unsafe_page])
 
-        self.wait_for_condition(lambda mn: url_string in mn.get_url())
+        self.wait_for_condition(lambda mn: url in mn.get_url())
 
     def check_ignore_warning_button(self, unsafe_page):
         ignore_warning_button = self.marionette.find_element(By.ID, "ignoreWarningButton")
