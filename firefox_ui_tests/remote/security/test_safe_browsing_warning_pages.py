@@ -4,7 +4,10 @@
 
 import time
 
-from marionette import By
+from marionette import (
+    By,
+    expected
+)
 from marionette.errors import NoSuchElementException
 
 from firefox_ui_harness.testcase import FirefoxTestCase
@@ -27,15 +30,9 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
 
         # Give the browser a little time, because SafeBrowsing.jsm takes a
         # while between start up and adding the example urls to the db.
+        # https://dxr.mozilla.org/mozilla-central/source/browser/base/content/browser.js#1194
+        # viewed 2015-02-24
         time.sleep(2)
-
-    def tearDown(self):
-        self.perms.remove('www.itisatrap.org', 'safe-browsing')
-        self.prefs.restore_all_prefs
-        try:
-            self.windows.close_all([self.browser])
-        finally:
-            FirefoxTestCase.tearDown(self)
 
     def test_warning_pages(self):
         with self.marionette.using_context("content"):
@@ -46,30 +43,32 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
 
                 # Load the test page again and test the report button
                 self.marionette.navigate(unsafe_page)
-
                 self.check_report_button(unsafe_page)
 
                 # Load the test page again and test the ignore warning button
                 self.marionette.navigate(unsafe_page)
                 self.check_ignore_warning_button(unsafe_page)
 
+                # Clean up after each unsafe page
+                self.perms.remove('www.itisatrap.org', 'safe-browsing')
+
     def check_get_me_out_of_here_button(self, unsafe_page):
-        get_me_out_of_here_button = self.marionette.find_element(By.ID, "getMeOutButton")
+        button = self.marionette.find_element(By.ID, "getMeOutButton")
 
         # This isn't clickable by the time we get here and needs a delay.
         time.sleep(1)
-        get_me_out_of_here_button.click()
+        button.click()
 
         homepage = self.prefs.get_pref('browser.startup.homepage',
                                        interface='nsIPrefLocalizedString')
         self.wait_for_condition(lambda mn: homepage in mn.get_url())
 
     def check_report_button(self, unsafe_page):
-        report_button = self.marionette.find_element(By.ID, "reportButton")
+        button = self.marionette.find_element(By.ID, "reportButton")
 
         # This isn't clickable by the time we get here and needs a delay.
         time.sleep(1)
-        report_button.click()
+        button.click()
 
         with self.marionette.using_context('chrome'):  # required by execute_script
             if 'its-a-trap' in unsafe_page:
@@ -102,15 +101,7 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
         time.sleep(1)
         ignore_warning_button.click()
 
-        def find_main_feature_el(mn):
-            try:
-                mn.find_element("id", "main-feature")
-                return True
-            except:
-                return False
-
-        self.wait_for_condition(find_main_feature_el)
+        self.wait_for_condition(expected.element_present(By.ID, 'main-feature'))
         self.assertRaises(NoSuchElementException, self.marionette.find_element,
-                          'id', 'ignoreWarningButton')
+                          By.ID, 'ignoreWarningButton')
         self.assertEquals(self.marionette.get_url(), unsafe_page)
-        self.perms.remove('www.itisatrap.org', 'safe-browsing')
