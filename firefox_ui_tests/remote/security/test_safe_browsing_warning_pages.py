@@ -4,11 +4,11 @@
 
 import time
 
-from marionette import (
+from marionette_driver import (
     By,
     expected
 )
-from marionette.errors import NoSuchElementException
+from marionette_driver.errors import NoSuchElementException
 
 from firefox_ui_harness.testcase import FirefoxTestCase
 
@@ -20,9 +20,9 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
 
         self.urls = [
             # Phishing URL
-            "https://www.itisatrap.org/firefox/its-a-trap.html",
+            'https://www.itisatrap.org/firefox/its-a-trap.html',
             # Malware URL
-            "https://www.itisatrap.org/firefox/its-an-attack.html"
+            'https://www.itisatrap.org/firefox/its-an-attack.html'
             ]
 
         self.prefs.set_pref('browser.safebrowsing.enabled', True)
@@ -30,9 +30,8 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
 
         # Give the browser a little time, because SafeBrowsing.jsm takes a
         # while between start up and adding the example urls to the db.
-        # https://dxr.mozilla.org/mozilla-central/source/browser/base/content/browser.js#1194
-        # viewed 2015-02-24
-        time.sleep(2)
+        # hg.mozilla.org/mozilla-central/file/46aebcd9481e/browser/base/content/browser.js#l1194
+        time.sleep(3)
 
     def test_warning_pages(self):
         with self.marionette.using_context("content"):
@@ -49,59 +48,54 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
                 self.marionette.navigate(unsafe_page)
                 self.check_ignore_warning_button(unsafe_page)
 
-                # Clean up after each unsafe page
-                self.perms.remove('www.itisatrap.org', 'safe-browsing')
-
     def check_get_me_out_of_here_button(self, unsafe_page):
         button = self.marionette.find_element(By.ID, "getMeOutButton")
 
-        # This isn't clickable by the time we get here and needs a delay.
+        # Wait for the DOM to receive events
         time.sleep(1)
         button.click()
 
-        homepage = self.prefs.get_pref('browser.startup.homepage',
-                                       interface='nsIPrefLocalizedString')
-        self.wait_for_condition(lambda mn: homepage in mn.get_url())
+        self.wait_for_condition(lambda mn: self.browser.default_homepage in mn.get_url())
 
     def check_report_button(self, unsafe_page):
         button = self.marionette.find_element(By.ID, "reportButton")
 
-        # This isn't clickable by the time we get here and needs a delay.
+        # Wait for the DOM to receive events
         time.sleep(1)
         button.click()
 
-        with self.marionette.using_context('chrome'):  # required by execute_script
-            if 'its-a-trap' in unsafe_page:
-                # mozmill: utils.formatUrlPref("app.support.baseURL") + "phishing-malware"
-                # the code commented out below produces this:
-                # https://support.mozilla.org/1/firefox/38.0a1/Darwin/en-US/phishing-malware
-                # which fails to match the page we're sent to...
-                # url = self.marionette.execute_script("""
-                #    Cu.import("resource://gre/modules/Services.jsm");
-                #    locale = Services.prefs.getCharPref("general.useragent.locale", "");
-                #    return (Services.urlFormatter.formatURLPref("app.support.baseURL")
-                #                                               + "phishing-malware");
-                #    """)
-                url = 'https://support.mozilla.org'
+        # Wait for page load so we can record and verify the url
+        self.wait_for_condition(lambda mn: mn.execute_script(
+            "return document.readyState == 'complete'"))
+        report_url = self.marionette.get_url()
 
+        with self.marionette.using_context('chrome'):
+            if 'its-a-trap' in unsafe_page:
+                url = self.marionette.execute_script("""
+                   Cu.import("resource://gre/modules/Services.jsm");
+                   return (Services.urlFormatter.formatURLPref("app.support.baseURL")
+                                                              + "phishing-malware");
+                   """)
             else:
                 url = self.marionette.execute_script("""
                    Cu.import("resource://gre/modules/Services.jsm");
-                   locale = Services.prefs.getCharPref("general.useragent.locale", "");
                    return (Services.urlFormatter.formatURLPref(
                             "browser.safebrowsing.malware.reportURL") + arguments[0]);
                    """, script_args=[unsafe_page])
 
-        self.wait_for_condition(lambda mn: url in mn.get_url())
+        # check that report_url matches the loaded url that we expect
+        self.assertEquals(report_url, self.browser.get_loaded_url(url))
 
     def check_ignore_warning_button(self, unsafe_page):
-        ignore_warning_button = self.marionette.find_element(By.ID, "ignoreWarningButton")
+        button = self.marionette.find_element(By.ID, 'ignoreWarningButton')
 
-        # This isn't clickable by the time we get here and needs a delay.
+        # Wait for the DOM to receive events
         time.sleep(1)
-        ignore_warning_button.click()
+        button.click()
 
         self.wait_for_condition(expected.element_present(By.ID, 'main-feature'))
-        self.assertRaises(NoSuchElementException, self.marionette.find_element,
-                          By.ID, 'ignoreWarningButton')
-        self.assertEquals(self.marionette.get_url(), unsafe_page)
+        self.wait_for_condition(expected.element_stale(button))
+        self.assertEquals(self.marionette.get_url(), self.browser.get_loaded_url(unsafe_page))
+
+        # Clean up by removing safe browsing permission for unsafe page
+        self.utils.remove_perms('www.itisatrap.org', 'safe-browsing')
