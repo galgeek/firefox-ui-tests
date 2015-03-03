@@ -24,37 +24,38 @@ class TestSubmitUnencryptedInfoWarning(FirefoxTestCase):
 
     def test_submit_unencrypted_info_warning(self):
         with self.marionette.using_context('content'):
-            # Navigate to the test page.
             self.marionette.navigate(self.url)
 
             # Get the page's search box and submit button.
             searchbox = self.marionette.find_element(By.ID, 'q')
             button = self.marionette.find_element(By.ID, 'submit')
 
-            # Get the warning message text and replace its two instances of "##" with "\n\n".
-            message = self.browser.get_property('formPostSecureToInsecureWarning.message')
-            message = message.replace('##', '\n\n')
-
             # Use the page's search box to submit information.
             searchbox.send_keys(self.test_string)
             button.click()
 
-            # Define a function, from marionette client unit tests, to help handle warning.
-            def alert_present(self):
+            # Define a function, per modal dialog unit tests for marionette, to handle warning.
+            def alert_present(mi):
                 try:
-                    Alert(self.marionette).text
+                    Alert(mi).text
                     return True
                 except NoAlertPresentException:
                     return False
 
-            # Wait for the warning, check its message text, and "accept" it.
-            self.wait_for_condition(lambda _: alert_present(self))
-            self.assertEqual(Alert(self.marionette).text, message)
-            Alert(self.marionette).accept()
-            self.wait_for_condition(lambda _: not alert_present(self))
+            # Get the warning message text and replace its two instances of "##" with "\n\n".
+            message = self.browser.get_property('formPostSecureToInsecureWarning.message')
+            message = message.replace('##', '\n\n')
 
-            # Wait while the search results page (re)loads,
+            # Wait for the warning, check its message text, and "accept" it.
+            self.wait_for_condition(lambda _: alert_present(self.marionette))
+            warning = Alert(self.marionette)
+            self.assertEqual(warning.text, message)
+            warning.accept()
+            self.wait_for_condition(lambda _: not alert_present(self.marionette))
+
+            # Wait while the search results page (re)loads
+            # (note that neither expected element_present nor element_displayed help here),
             # then check that search_term contains the expected text.
-            time.sleep(1)
+            time.sleep(0.5)
             search_term = self.marionette.find_element(By.ID, 'search-term')
             self.assertEqual(search_term.get_attribute('textContent'), self.test_string)
