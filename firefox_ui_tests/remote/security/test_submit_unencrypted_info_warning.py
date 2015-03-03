@@ -21,44 +21,42 @@ class TestSubmitUnencryptedInfoWarning(FirefoxTestCase):
         self.test_string = 'mozilla'
 
         self.prefs.set_pref('security.warn_submit_insecure', True)
+        self.prefs.set_pref('prompts.tab_modal.enabled', True)
 
     def test_submit_unencrypted_info_warning(self):
         with self.marionette.using_context('content'):
-            # Navigate to the test page
+            # Navigate to the test page.
             self.marionette.navigate(self.url)
 
-            # Get the page's search box and submit button
+            # Get the page's search box and submit button.
             searchbox = self.marionette.find_element(By.ID, 'q')
             button = self.marionette.find_element(By.ID, 'submit')
 
-            # Prepare to handle warning
-            with self.assertRaises(NoAlertPresentException):
-                warning = self.marionette.switch_to_alert()
-                warning.text
-
-            # Get the warning message text and replace its two instances of "##" with "\n\n"
+            # Get the warning message text and replace its two instances of "##" with "\n\n".
             message = self.browser.get_property('formPostSecureToInsecureWarning.message')
             message = message.replace('##', '\n\n')
 
-            # Use the page's search box to submit information
+            # Use the page's search box to submit information.
             searchbox.send_keys(self.test_string)
             button.click()
 
-            # Handle warning and check its message text
-            self.wait_for_condition(lambda _: self.alert_present())
+            # Define a function, from marionette client unit tests, to help handle warning.
+            def alert_present(self):
+                try:
+                    Alert(self.marionette).text
+                    return True
+                except NoAlertPresentException:
+                    return False
+
+            # Handle warning and check its message text.
+            self.wait_for_condition(lambda _: alert_present(self))
             warning = self.marionette.switch_to_alert()
             self.assertEqual(warning.text, message)
             warning.accept()
+            self.wait_for_condition(lambda _: not alert_present(self))
 
             # Wait while the search results page (re)loads,
-            # the check that search_term contains the expected text
+            # then check that search_term contains the expected text.
             time.sleep(1)
             search_term = self.marionette.find_element(By.ID, 'search-term')
             self.assertEqual(search_term.get_attribute('textContent'), self.test_string)
-
-    def alert_present(self):
-        try:
-            Alert(self.marionette).text
-            return True
-        except NoAlertPresentException:
-            return False
