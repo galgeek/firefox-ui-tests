@@ -21,7 +21,6 @@ class TestSubmitUnencryptedInfoWarning(FirefoxTestCase):
         self.test_string = 'mozilla'
 
         self.prefs.set_pref('security.warn_submit_insecure', True)
-        self.prefs.set_pref('prompts.tab_modal.enabled', True)
 
     def test_submit_unencrypted_info_warning(self):
         with self.marionette.using_context('content'):
@@ -48,11 +47,10 @@ class TestSubmitUnencryptedInfoWarning(FirefoxTestCase):
                 except NoAlertPresentException:
                     return False
 
-            # Handle warning and check its message text.
+            # Wait for the warning, check its message text, and "accept" it.
             self.wait_for_condition(lambda _: alert_present(self))
-            warning = self.marionette.switch_to_alert()
-            self.assertEqual(warning.text, message)
-            warning.accept()
+            self.assertEqual(Alert(self.marionette).text, message)
+            Alert(self.marionette).accept()
             self.wait_for_condition(lambda _: not alert_present(self))
 
             # Wait while the search results page (re)loads,
