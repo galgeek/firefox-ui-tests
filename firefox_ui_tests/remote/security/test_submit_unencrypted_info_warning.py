@@ -4,7 +4,7 @@
 
 import time
 
-from marionette_driver import By
+from marionette_driver import By, expected
 
 from marionette_driver.errors import NoAlertPresentException
 from marionette_driver.marionette import Alert
@@ -35,27 +35,28 @@ class TestSubmitUnencryptedInfoWarning(FirefoxTestCase):
             button.click()
 
             # Define a function, per modal dialog unit tests for marionette, to handle warning.
-            def alert_present(mi):
+            def alert_present(mn):
                 try:
-                    Alert(mi).text
+                    Alert(mn).text
                     return True
                 except NoAlertPresentException:
                     return False
+
+            # Wait for the warning, check its message text, and "accept" it.
+            self.wait_for_condition(lambda _: alert_present(self.marionette))
+            warning = Alert(self.marionette)
 
             # Get the warning message text and replace its two instances of "##" with "\n\n".
             message = self.browser.get_property('formPostSecureToInsecureWarning.message')
             message = message.replace('##', '\n\n')
 
-            # Wait for the warning, check its message text, and "accept" it.
-            self.wait_for_condition(lambda _: alert_present(self.marionette))
-            warning = Alert(self.marionette)
+            # Verify the text matches, then accept the warning
             self.assertEqual(warning.text, message)
             warning.accept()
             self.wait_for_condition(lambda _: not alert_present(self.marionette))
 
-            # Wait while the search results page (re)loads
-            # (note that neither expected element_present nor element_displayed help here),
+            # Wait while the page updates,
             # then check that search_term contains the expected text.
-            time.sleep(0.5)
+            self.wait_for_condition(expected.element_stale(searchbox))
             search_term = self.marionette.find_element(By.ID, 'search-term')
             self.assertEqual(search_term.get_attribute('textContent'), self.test_string)
