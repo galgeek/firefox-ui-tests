@@ -71,9 +71,11 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
         # Wait for the button to become stale, then wait for page load
         # so we can verify the url
         self.wait_for_condition(expected.element_stale(button))
+        # TODO: replace with waitforPageLoad replacement per Bug 1140470
         self.wait_for_condition(lambda mn: mn.execute_script(
             "return document.readyState == 'complete'"))
 
+        # Get the base URL to check; this will result in a redirect.
         with self.marionette.using_context('chrome'):
             if 'its-a-trap' in unsafe_page:
                 url = self.marionette.execute_script("""
@@ -88,7 +90,7 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
                      "browser.safebrowsing.malware.reportURL") + arguments[0];
                    """, script_args=[unsafe_page])
 
-        # check that report_url matches the loaded url that we expect
+        # check that our current url matches the final url we expect
         self.assertEquals(self.marionette.get_url(), self.browser.get_final_url(url))
 
     def check_ignore_warning_button(self, unsafe_page):
