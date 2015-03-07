@@ -2,9 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import time
-
-from marionette_driver import By, expected
+from marionette_driver import By, expected, Wait
 
 from marionette_driver.errors import NoAlertPresentException
 from marionette_driver.marionette import Alert
@@ -34,29 +32,21 @@ class TestSubmitUnencryptedInfoWarning(FirefoxTestCase):
             searchbox.send_keys(self.test_string)
             button.click()
 
-            # Define a function, per modal dialog unit tests for marionette, to handle warning.
-            def alert_present(mn):
-                try:
-                    Alert(mn).text
-                    return True
-                except NoAlertPresentException:
-                    return False
-
-            # Wait for the warning, check its message text, and "accept" it.
-            self.wait_for_condition(lambda _: alert_present(self.marionette))
-            warning = Alert(self.marionette)
-
-            # Get the warning message text and replace its two instances of "##" with "\n\n".
+            # Get the expected warning text and replace its two instances of "##" with "\n\n".
             message = self.browser.get_property('formPostSecureToInsecureWarning.message')
             message = message.replace('##', '\n\n')
 
-            # Verify the text matches, then accept the warning
-            self.assertEqual(warning.text, message)
-            warning.accept()
-            self.wait_for_condition(lambda _: not alert_present(self.marionette))
+            # Wait for the warning, verify the expected text matches warning, accept the warning
+            warning = Alert(self.marionette)
+            try:
+                Wait(self.marionette, ignored_exceptions=NoAlertPresentException).until(
+                    lambda _: warning.text == message)
+            finally:
+                warning.accept()
 
-            # Wait while the page updates,
-            # then check that search_term contains the expected text.
+            # Wait while the page updates
             self.wait_for_condition(expected.element_stale(searchbox))
+
+            # Check that search_term contains the test string.
             search_term = self.marionette.find_element(By.ID, 'search-term')
             self.assertEqual(search_term.get_attribute('textContent'), self.test_string)
