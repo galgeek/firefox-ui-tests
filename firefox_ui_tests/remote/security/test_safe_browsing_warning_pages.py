@@ -6,8 +6,6 @@ import time
 
 from marionette_driver import By, expected
 
-from marionette_driver.errors import NoSuchElementException
-
 from firefox_ui_harness.testcase import FirefoxTestCase
 
 
@@ -71,7 +69,7 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
         # Wait for the button to become stale, then wait for page load
         # so we can verify the url
         self.wait_for_condition(expected.element_stale(button))
-        # TODO: replace with waitforPageLoad replacement per Bug 1140470
+        # TODO: Bug 1140470: use replacement for mozmill's waitforPageLoad
         self.wait_for_condition(lambda mn: mn.execute_script(
             "return document.readyState == 'complete'"))
 
@@ -79,16 +77,16 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
         with self.marionette.using_context('chrome'):
             if 'its-a-trap' in unsafe_page:
                 url = self.marionette.execute_script("""
-                   Components.utils.import("resource://gre/modules/Services.jsm");
-                   return Services.urlFormatter.formatURLPref("app.support.baseURL")
-                                                              + "phishing-malware";
-                   """)
+                    Components.utils.import("resource://gre/modules/Services.jsm");
+                    return Services.urlFormatter.formatURLPref("app.support.baseURL")
+                                                               + "phishing-malware";
+                """)
             else:
                 url = self.marionette.execute_script("""
-                   Components.utils.import("resource://gre/modules/Services.jsm");
-                   return Services.urlFormatter.formatURLPref(
-                     "browser.safebrowsing.malware.reportURL") + arguments[0];
-                   """, script_args=[unsafe_page])
+                    Components.utils.import("resource://gre/modules/Services.jsm");
+                    return Services.urlFormatter.formatURLPref(
+                    "browser.safebrowsing.malware.reportURL") + arguments[0];
+                """, script_args=[unsafe_page])
 
         # check that our current url matches the final url we expect
         self.assertEquals(self.marionette.get_url(), self.browser.get_final_url(url))
