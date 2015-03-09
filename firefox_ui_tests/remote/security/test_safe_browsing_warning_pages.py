@@ -70,22 +70,23 @@ class TestSafeBrowsingWarningPages(FirefoxTestCase):
         # so we can verify the url
         self.wait_for_condition(expected.element_stale(button))
         # TODO: Bug 1140470: use replacement for mozmill's waitforPageLoad
-        self.wait_for_condition(lambda mn: mn.execute_script(
-            "return document.readyState == 'complete'"))
+        self.wait_for_condition(lambda mn: mn.execute_script("""
+          return document.readyState == 'complete';
+        """))
 
         # Get the base URL to check; this will result in a redirect.
         with self.marionette.using_context('chrome'):
             if 'its-a-trap' in unsafe_page:
                 url = self.marionette.execute_script("""
-                    Components.utils.import("resource://gre/modules/Services.jsm");
-                    return Services.urlFormatter.formatURLPref("app.support.baseURL")
-                                                               + "phishing-malware";
+                  Components.utils.import("resource://gre/modules/Services.jsm");
+                  return Services.urlFormatter.formatURLPref("app.support.baseURL")
+                                                             + "phishing-malware";
                 """)
             else:
                 url = self.marionette.execute_script("""
-                    Components.utils.import("resource://gre/modules/Services.jsm");
-                    return Services.urlFormatter.formatURLPref(
-                    "browser.safebrowsing.malware.reportURL") + arguments[0];
+                  Components.utils.import("resource://gre/modules/Services.jsm");
+                  return Services.urlFormatter.formatURLPref(
+                  "browser.safebrowsing.malware.reportURL") + arguments[0];
                 """, script_args=[unsafe_page])
 
         # check that our current url matches the final url we expect
