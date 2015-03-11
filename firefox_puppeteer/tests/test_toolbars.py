@@ -152,6 +152,7 @@ class TestIdentityPopup(FirefoxTestCase):
                          self.identity_popup.organization_label.get_attribute('localName'))
         self.assertEqual('panel', self.identity_popup.popup.get_attribute('localName'))
 
+    @skip_under_xvfb
     def test_popup_elements(self):
         data_uri = 'data:text/html,<title>Title</title>'
         locationbar = self.browser.navbar.locationbar
@@ -175,6 +176,7 @@ class TestIdentityPopup(FirefoxTestCase):
         self.identity_popup.popup.send_keys(Keys.ESCAPE)
         self.wait_for_condition(lambda _: not self.identity_popup.is_open)
 
+    @skip_under_xvfb
     def test_is_open(self):
         data_uri = 'data:text/html,<title>Title</title>'
         locationbar = self.browser.navbar.locationbar
