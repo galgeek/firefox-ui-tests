@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this file,
 # You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from marionette_driver import Wait, By
+from marionette_driver import By, expected, Wait
 
 from ..api.keys import Keys
 from ..api.l10n import L10n
@@ -446,3 +446,21 @@ class IdentityPopup(BaseLib):
         :returns: Reference to the identity-popup content verifier.
         """
         return self.marionette.find_element(By.ID, 'identity-popup-content-verifier')
+
+    def close(self, force=False):
+        """Closes the identity popup by hitting the escape key.
+
+        :param force: Optional, if True, the popup will be force closed,
+         default to `False`.
+        """
+        if expected.element_not_present(By.ID, 'identity-popup') or not self.is_open:
+            return
+
+        if force:
+            self.marionette.execute_script("""
+              arguments[0].hidePopup();
+            """, script_args=[self.popup])
+        else:
+            self.popup.send_keys(Keys.ESCAPE)
+
+        Wait(self.marionette).until(lambda _: not self.is_open)
