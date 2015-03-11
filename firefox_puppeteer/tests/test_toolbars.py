@@ -4,6 +4,8 @@
 
 from marionette_driver.errors import NoSuchElementException
 
+from firefox_puppeteer.api.keys import Keys
+
 from firefox_ui_harness.decorators import skip_under_xvfb
 from firefox_ui_harness.testcase import FirefoxTestCase
 
@@ -135,3 +137,48 @@ class TestAutoCompleteResults(FirefoxTestCase):
             self.assertTrue(len(all_matches) > 0)
             for match_fragment in all_matches:
                 self.assertIn(match_fragment, (input_text, input_text.upper()))
+
+class TestIdentityPopup(FirefoxTestCase):
+
+    def setUp(self):
+        FirefoxTestCase.setUp(self)
+        self.identity_popup = self.browser.navbar.locationbar.identity_popup
+
+    def test_identity_popup_elements(self):
+        self.assertEqual('box', self.identity_popup.box.get_attribute('localName'))
+        self.assertEqual('label', self.identity_popup.country_label.get_attribute('localName'))
+        self.assertEqual('label', self.identity_popup.organization_label.get_attribute('localName'))
+        self.assertEqual('panel', self.identity_popup.popup.get_attribute('localName'))
+
+    def test_popup_elements(self):
+        data_uri = 'data:text/html,<title>Title</title>'
+        locationbar = self.browser.navbar.locationbar
+        locationbar.load_url(data_uri)
+
+        self.identity_popup.box.click()
+        self.wait_for_condition(lambda _: self.identity_popup.is_open)
+
+        self.assertEqual('description', self.identity_popup.encryption_label.get_attribute('localName'))
+        self.assertEqual('image', self.identity_popup.encryption_icon.get_attribute('localName'))
+        self.assertEqual('description', self.identity_popup.host.get_attribute('localName'))
+        self.assertEqual('button', self.identity_popup.more_info_button.get_attribute('localName'))
+        self.assertEqual('description', self.identity_popup.owner.get_attribute('localName'))
+        self.assertEqual('description', self.identity_popup.owner_location.get_attribute('localName'))
+        self.assertEqual('vbox', self.identity_popup.permissions.get_attribute('localName'))
+        self.assertEqual('description', self.identity_popup.verifier.get_attribute('localName'))
+
+        self.identity_popup.popup.send_keys(Keys.ESCAPE)
+        self.wait_for_condition(lambda _: not self.identity_popup.is_open)
+
+    def test_is_open(self):
+        data_uri = 'data:text/html,<title>Title</title>'
+        locationbar = self.browser.navbar.locationbar
+        locationbar.load_url(data_uri)
+
+        self.assertTrue(not self.identity_popup.is_open)
+
+        self.identity_popup.box.click()
+        self.wait_for_condition(lambda _: self.identity_popup.is_open)
+
+        self.identity_popup.popup.send_keys(Keys.ESCAPE)
+        self.wait_for_condition(lambda _: not self.identity_popup.is_open)
