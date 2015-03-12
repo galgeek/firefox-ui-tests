@@ -173,8 +173,9 @@ class TestIdentityPopup(FirefoxTestCase):
         self.assertEqual('vbox', self.identity_popup.permissions.get_attribute('localName'))
         self.assertEqual('description', self.identity_popup.verifier.get_attribute('localName'))
 
-        self.identity_popup.popup.send_keys(Keys.ESCAPE)
-        self.wait_for_condition(lambda _: not self.identity_popup.is_open)
+        self.marionette.execute_script("""
+          arguments[0].hidePopup();
+        """, script_args=[self.identity_popup.popup])
 
     @skip_under_xvfb
     def test_is_open(self):
@@ -187,5 +188,6 @@ class TestIdentityPopup(FirefoxTestCase):
         self.identity_popup.box.click()
         self.wait_for_condition(lambda _: self.identity_popup.is_open)
 
-        self.identity_popup.popup.send_keys(Keys.ESCAPE)
-        self.wait_for_condition(lambda _: not self.identity_popup.is_open)
+        self.marionette.execute_script("""
+          arguments[0].hidePopup();
+        """, script_args=[self.identity_popup.popup])
