@@ -145,6 +145,10 @@ class TestIdentityPopup(FirefoxTestCase):
     def tearDown(self):
         try:
             self.identity_popup.close(force=True)
+        except NoSuchElementException:
+            # TODO: A NoSuchElementException may be thrown here when tests accessing the
+            # identity_popup.popup element are skipped.
+            pass
         finally:
             FirefoxTestCase.tearDown(self)
 
