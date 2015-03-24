@@ -63,30 +63,32 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
 
         i = 0
         for item in self.test_data:
-            self.browser.tabbar.switch_to(i)
+            self.browser.tabbar.tabs[i].switch_to()
             self.verify_certificate_status(item)
             i = i + 1
         '''
 
     def verify_certificate_status(self, item):
-        url = item['url']
+        url, identity, type = item['url'], item['identity'], item['type']
 
         # Check the favicon
         # TODO: find a better way to check, e.g., mozmill's isDisplayed
-        self.assertEqual(self.browser.navbar.locationbar.favicon.get_attribute('hidden'), 'false',
-                         'Lock icon is visible in identity box for ' + url)
+        favicon_hidden = self.marionette.execute_script("""
+          return arguments[0].hasAttribute("hidden");
+        """, script_args=[self.browser.navbar.locationbar.favicon])
+        self.assertFalse(favicon_hidden)
 
         self.identity_popup.box.click()
         Wait(self.marionette).until(lambda _: self.identity_popup.is_open)
 
         # Check the type shown on the idenity popup doorhanger
         self.assertEqual(self.identity_popup.popup.get_attribute('className'),
-                         item['type'],
+                         type,
                          'Extended certificate is verified for ' + url)
 
         # Check the identity label
         self.assertEqual(self.identity_popup.organization_label.get_attribute('value'),
-                         item['identity'],
+                         identity,
                          'Identity name is correct for ' + url)
 
         # Get the information from the certificate
@@ -96,7 +98,7 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
         page_info = self.browser.open_page_info_window(
             lambda _: self.identity_popup.more_info_button.click())
 
-        if item['identity'] != '':
+        if identity != '':
             owner = cert['organization']
         else:
             owner = page_info.get_property('securityNoOwner')
