@@ -25,10 +25,6 @@ class TestNoCertificate(FirefoxTestCase):
             self.browser.switch_to()
             self.windows.close_all([self.browser])
             self.identity_popup.close(force=True)
-        except NoSuchElementException:
-            # TODO: A NoSuchElementException may be thrown here when the test is skipped
-            # as under xvfb.
-            pass
         finally:
             FirefoxTestCase.tearDown(self)
 
