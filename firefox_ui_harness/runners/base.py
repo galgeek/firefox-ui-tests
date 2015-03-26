@@ -24,7 +24,7 @@ DEFAULT_PREFS = {
     'browser.search.update': False,
     'browser.sessionstore.resume_from_crash': False,
     'browser.shell.checkDefaultBrowser': False,
-    'browser.startup.page': 0,
+    'browser.startup.page': 3,
     'browser.tabs.animate': False,
     'browser.tabs.warnOnClose': False,
     'browser.tabs.warnOnOpen': False,

@@ -39,8 +39,8 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
 
     def tearDown(self):
         try:
-            self.identity_popup.close(force=True)
             self.browser.tabbar.close_all_tabs([self.browser.tabbar.tabs[0]])
+            self.identity_popup.close(force=True)
         except NoSuchElementException:
             # TODO: A NoSuchElementException may be thrown here when the test is skipped
             # as under xvfb.
@@ -50,23 +50,21 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
 
     @skip_if_e10s
     @skip_under_xvfb
-    # Bug 995801: Test certificate status after browser restart
     def test_ssl_status_after_restart(self):
         for item in self.test_data:
             with self.marionette.using_context('content'):
                 self.marionette.navigate(item['url'])
             self.verify_certificate_status(item)
-            self.browser.tabbar.open_tab()
+            new_tab = self.browser.tabbar.open_tab()
+            new_tab.select()
 
-        '''
         self.restart()
 
         i = 0
         for item in self.test_data:
-            self.browser.tabbar.tabs[i].switch_to()
+            self.browser.tabbar.tabs[i].select()
             self.verify_certificate_status(item)
             i = i + 1
-        '''
 
     def verify_certificate_status(self, item):
         url, identity, type = item['url'], item['identity'], item['type']
@@ -98,28 +96,30 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
         page_info = self.browser.open_page_info_window(
             lambda _: self.identity_popup.more_info_button.click())
 
+        # Verify that the current panel is the security panel
+        self.assertEqual(page_info.deck.selected_panel, page_info.deck.security)
+
+        # Verify the domain listed on the security panel
+        # If this is a wildcard cert, use only the domain
+        if '*' in cert['commonName'][0]:
+            cert_name = self.security.get_domain_from_common_name(cert['commonName'])
+        else:
+            cert_name = cert['commonName']
+
+        self.assertIn(cert_name, page_info.deck.security.domain.get_attribute('value'),
+                      'Expected name found in certificate for ' + url)
+
+        # Verify the owner listed on the security panel
         if identity != '':
             owner = cert['organization']
         else:
             owner = page_info.get_property('securityNoOwner')
 
-        try:
-            # Verify that the current panel is the security panel
-            self.assertEqual(page_info.deck.selected_panel, page_info.deck.security)
+        self.assertEqual(page_info.deck.security.owner.get_attribute('value'), owner,
+                         'Expected owner label found for ' + url)
 
-            # Verify the domain listed on the security panel
-            self.assertIn(self.security.get_domain_from_common_name(cert['commonName']),
-                          page_info.deck.security.domain.get_attribute('value'),
-                          'Expected domain found in certificate for ' + url)
-
-            # Verify the owner listed on the security panel
-            self.assertEqual(page_info.deck.security.owner.get_attribute('value'), owner,
-                             'Expected owner label found for ' + url)
-
-            # Verify the verifier listed on the security panel
-            self.assertEqual(page_info.deck.security.verifier.get_attribute('value'),
-                             cert['issuerOrganization'],
-                             'Verifier matches issuer of certificate for ' + url)
-        finally:
-            page_info.close()
-            self.browser.focus()
+        # Verify the verifier listed on the security panel
+        self.assertEqual(page_info.deck.security.verifier.get_attribute('value'),
+                         cert['issuerOrganization'],
+                         'Verifier matches issuer of certificate for ' + url)
+        page_info.close()
