@@ -5,7 +5,6 @@
 from urlparse import urlparse
 
 from marionette_driver import Wait
-from marionette_driver.errors import NoSuchElementException
 
 from firefox_ui_harness.decorators import skip_if_e10s, skip_under_xvfb
 from firefox_ui_harness.testcase import FirefoxTestCase
@@ -22,8 +21,8 @@ class TestNoCertificate(FirefoxTestCase):
 
     def tearDown(self):
         try:
-            self.browser.switch_to()
             self.windows.close_all([self.browser])
+            self.browser.switch_to()
             self.identity_popup.close(force=True)
         finally:
             FirefoxTestCase.tearDown(self)
