@@ -3,7 +3,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from marionette_driver import Wait
-from marionette_driver.errors import NoSuchElementException
 
 from firefox_ui_harness.decorators import skip_if_e10s, skip_under_xvfb
 from firefox_ui_harness.testcase import FirefoxTestCase
@@ -41,10 +40,6 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
         try:
             self.browser.tabbar.close_all_tabs([self.browser.tabbar.tabs[0]])
             self.identity_popup.close(force=True)
-        except NoSuchElementException:
-            # TODO: A NoSuchElementException may be thrown here when the test is skipped
-            # as under xvfb.
-            pass
         finally:
             FirefoxTestCase.tearDown(self)
 
@@ -58,6 +53,13 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
             new_tab = self.browser.tabbar.open_tab()
             new_tab.select()
 
+        # TODO: Bug 1148220 add ability to store open tabs to restart method
+        self.marionette.execute_script("""
+          Components.utils.import("resource://gre/modules/Services.jsm");
+          let cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
+                                     .createInstance(Components.interfaces.nsISupportsPRBool);
+          Services.obs.notifyObservers(cancelQuit, "quit-application-requested", null);
+        """)
         self.restart()
 
         i = 0
