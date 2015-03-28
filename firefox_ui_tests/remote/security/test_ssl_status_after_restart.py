@@ -13,7 +13,7 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
     def setUp(self):
         FirefoxTestCase.setUp(self)
 
-        self.test_data = [
+        self.test_data = (
             {
                 'url': 'https://ssl-dv.mozqa.com',
                 'identity': '',
@@ -29,7 +29,7 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
                 'identity': '',
                 'type': 'verifiedDomain'
             }
-        ]
+        )
 
         # Set browser to restore previous session
         self.prefs.set_pref('browser.startup.page', 3)
@@ -38,6 +38,7 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
 
     def tearDown(self):
         try:
+            self.windows.close_all([self.browser])
             self.browser.tabbar.close_all_tabs([self.browser.tabbar.tabs[0]])
             self.identity_popup.close(force=True)
         finally:
@@ -50,8 +51,7 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
             with self.marionette.using_context('content'):
                 self.marionette.navigate(item['url'])
             self.verify_certificate_status(item)
-            new_tab = self.browser.tabbar.open_tab()
-            new_tab.select()
+            self.browser.tabbar.open_tab()
 
         # TODO: Bug 1148220 add ability to store open tabs to restart method
         self.marionette.execute_script("""
@@ -62,14 +62,12 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
         """)
         self.restart()
 
-        i = 0
-        for item in self.test_data:
-            self.browser.tabbar.tabs[i].select()
+        for index, item in enumerate(self.test_data):
+            self.browser.tabbar.tabs[index].select()
             self.verify_certificate_status(item)
-            i = i + 1
 
     def verify_certificate_status(self, item):
-        url, identity, type = item['url'], item['identity'], item['type']
+        url, identity, cert_type = item['url'], item['identity'], item['type']
 
         # Check the favicon
         # TODO: find a better way to check, e.g., mozmill's isDisplayed
@@ -83,8 +81,8 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
 
         # Check the type shown on the idenity popup doorhanger
         self.assertEqual(self.identity_popup.popup.get_attribute('className'),
-                         type,
-                         'Extended certificate is verified for ' + url)
+                         cert_type,
+                         'Certificate type is verified for ' + url)
 
         # Check the identity label
         self.assertEqual(self.identity_popup.organization_label.get_attribute('value'),
@@ -102,14 +100,15 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
         self.assertEqual(page_info.deck.selected_panel, page_info.deck.security)
 
         # Verify the domain listed on the security panel
-        # If this is a wildcard cert, use only the domain
-        if '*' in cert['commonName'][0]:
-            cert_name = self.security.get_domain_from_common_name(cert['commonName'])
+        # If this is a wildcard cert, check only the domain
+        if '*' == cert['commonName'][0]:
+            self.assertIn(self.security.get_domain_from_common_name(cert['commonName']),
+                          page_info.deck.security.domain.get_attribute('value'),
+                          'Expected domain found in certificate for ' + url)
         else:
-            cert_name = cert['commonName']
-
-        self.assertIn(cert_name, page_info.deck.security.domain.get_attribute('value'),
-                      'Expected name found in certificate for ' + url)
+            self.assertEqual(page_info.deck.security.domain.get_attribute('value'),
+                             cert['commonName'],
+                             'Domain value matches certificate common name.')
 
         # Verify the owner listed on the security panel
         if identity != '':
@@ -124,4 +123,3 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
         self.assertEqual(page_info.deck.security.verifier.get_attribute('value'),
                          cert['issuerOrganization'],
                          'Verifier matches issuer of certificate for ' + url)
-        page_info.close()
