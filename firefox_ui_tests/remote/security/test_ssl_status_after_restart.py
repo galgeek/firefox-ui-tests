@@ -53,13 +53,6 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
             self.verify_certificate_status(item)
             self.browser.tabbar.open_tab()
 
-        # TODO: Bug 1148220 add ability to store open tabs to restart method
-        self.marionette.execute_script("""
-          Components.utils.import("resource://gre/modules/Services.jsm");
-          let cancelQuit = Components.classes["@mozilla.org/supports-PRBool;1"]
-                                     .createInstance(Components.interfaces.nsISupportsPRBool);
-          Services.obs.notifyObservers(cancelQuit, "quit-application-requested", null);
-        """)
         self.restart()
 
         for index, item in enumerate(self.test_data):
@@ -101,7 +94,7 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
 
         # Verify the domain listed on the security panel
         # If this is a wildcard cert, check only the domain
-        if '*' == cert['commonName'][0]:
+        if cert['commonName'].startswith('*'):
             self.assertIn(self.security.get_domain_from_common_name(cert['commonName']),
                           page_info.deck.security.domain.get_attribute('value'),
                           'Expected domain found in certificate for ' + url)
