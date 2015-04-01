@@ -40,6 +40,7 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
         try:
             self.windows.close_all([self.browser])
             self.browser.tabbar.close_all_tabs([self.browser.tabbar.tabs[0]])
+            self.browser.switch_to()
             self.identity_popup.close(force=True)
         finally:
             FirefoxTestCase.tearDown(self)
@@ -116,3 +117,4 @@ class TestSSLStatusAfterRestart(FirefoxTestCase):
         self.assertEqual(page_info.deck.security.verifier.get_attribute('value'),
                          cert['issuerOrganization'],
                          'Verifier matches issuer of certificate for ' + url)
+        page_info.close()
