@@ -106,7 +106,7 @@ class TestAutoCompleteResults(FirefoxTestCase):
     def test_close(self):
         autocompleteresults = self.browser.navbar.locationbar.autocomplete_results
         self.browser.navbar.locationbar.urlbar.send_keys('a')
-        self.wait_for_condition(lambda _: autocompleteresults.is_complete)
+        self.wait_for_condition(lambda _: autocompleteresults.is_open)
         # The Wait in the library implementation will fail this if this doesn't
         # end up closing.
         autocompleteresults.close()
@@ -115,7 +115,7 @@ class TestAutoCompleteResults(FirefoxTestCase):
     def test_force_close(self):
         autocompleteresults = self.browser.navbar.locationbar.autocomplete_results
         self.browser.navbar.locationbar.urlbar.send_keys('a')
-        self.wait_for_condition(lambda _: autocompleteresults.is_complete)
+        self.wait_for_condition(lambda _: autocompleteresults.is_open)
         # The Wait in the library implementation will fail this if this doesn't
         # end up closing.
         autocompleteresults.close(force=True)
