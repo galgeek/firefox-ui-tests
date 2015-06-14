@@ -137,7 +137,10 @@ class TestAutoCompleteResults(FirefoxTestCase):
             all_matches = title_matches + url_matches
             self.assertTrue(len(all_matches) > 0)
             for match_fragment in all_matches:
-                self.assertIn(match_fragment, (input_text, input_text.upper()))
+                # skip the new unified search item, if present
+                if match_fragment == '- Search with Yahoo':
+                    continue
+                self.assertIn(input_text, match_fragment.lower())
 
 
 class TestIdentityPopup(FirefoxTestCase):
