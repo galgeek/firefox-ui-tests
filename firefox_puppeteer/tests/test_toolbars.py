@@ -136,7 +136,8 @@ class TestAutoCompleteResults(FirefoxTestCase):
             url_matches = autocompleteresults.get_matching_text(result, "url")
             all_matches = title_matches + url_matches
             self.assertTrue(len(all_matches) > 0)
-            for match_fragment in all_matches:
+            # check all but the last item (the new unified search item from Bug 1168811)
+            for match_fragment in all_matches[:-1]:
                 self.assertIn(input_text, match_fragment.lower())
 
 
