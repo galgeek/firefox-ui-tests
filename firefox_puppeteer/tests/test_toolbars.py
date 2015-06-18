@@ -132,12 +132,14 @@ class TestAutoCompleteResults(FirefoxTestCase):
         visible_results = autocompleteresults.visible_results
         self.assertTrue(len(visible_results) > 0)
         for result in visible_results:
+            # check matching text only for results of type bookmark
+            if result.get_attribute('type') != 'bookmark':
+                continue
             title_matches = autocompleteresults.get_matching_text(result, "title")
             url_matches = autocompleteresults.get_matching_text(result, "url")
             all_matches = title_matches + url_matches
             self.assertTrue(len(all_matches) > 0)
-            # check all but the last item (the new unified search item from Bug 1168811)
-            for match_fragment in all_matches[:-1]:
+            for match_fragment in all_matches:
                 self.assertIn(input_text, match_fragment.lower())
 
 

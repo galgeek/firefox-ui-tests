@@ -316,9 +316,9 @@ class AutocompleteResults(BaseLib):
 
     @property
     def is_complete(self):
-        """Returns when this popup is open and search results are complete.
+        """Returns when this popup is open and autocomplete results are complete.
 
-        :returns: True when the popup is open including any search results, otherwise false.
+        :returns: True, when autocomplete results have been populated.
         """
         return self.marionette.execute_script("""
           Components.utils.import("resource://gre/modules/Services.jsm");
