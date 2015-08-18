@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import unittest
+
 import os
 
 from firefox_ui_harness import FirefoxTestCase
@@ -9,6 +11,7 @@ from firefox_ui_harness import FirefoxTestCase
 from firefox_puppeteer.api.software_update import SoftwareUpdate
 
 
+@unittest.skip('Bug 1196006 - about and page_info window tests time out on Travis Linux worker')
 class TestSoftwareUpdate(FirefoxTestCase):
 
     def setUp(self):
@@ -67,6 +70,7 @@ class TestSoftwareUpdate(FirefoxTestCase):
         self.assertTrue(self.software_update.staging_directory)
 
 
+@unittest.skip('Bug 1196006 - about and page_info window tests time out on Travis Linux worker')
 class TestUpdateChannel(FirefoxTestCase):
 
     def setUp(self):
@@ -93,6 +97,7 @@ class TestUpdateChannel(FirefoxTestCase):
         self.assertEqual(self.software_update.update_channel.default_channel, 'new_channel')
 
 
+@unittest.skip('Bug 1196006 - about and page_info window tests time out on Travis Linux worker')
 class TestMARChannels(FirefoxTestCase):
 
     def setUp(self):
