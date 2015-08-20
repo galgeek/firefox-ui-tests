@@ -2,8 +2,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import unittest
-
 from marionette_driver import By, Wait
 from marionette_driver.errors import NoSuchWindowException, TimeoutException
 
@@ -65,7 +63,6 @@ class TestWindows(FirefoxTestCase):
         self.assertEqual(len(self.windows.all), 1)
 
 
-@unittest.skip('Bug 1196006 - test_about_window.py and test_page_info_window.py time out...')
 class TestBaseWindow(FirefoxTestCase):
 
     def tearDown(self):
@@ -176,7 +173,6 @@ class TestBaseWindow(FirefoxTestCase):
         win1.switch_to()
 
 
-@unittest.skip('Bug 1196006 - test_about_window.py and test_page_info_window.py time out...')
 class TestBrowserWindow(FirefoxTestCase):
 
     def tearDown(self):
