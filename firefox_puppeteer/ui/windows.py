@@ -349,7 +349,8 @@ class BaseWindow(BaseLib):
 
         window = self._windows.create_window_instance(new_handle, expected_window_class)
 
-        Wait(self.marionette).until(lambda _: window.focused == expect_focus)
+        if expect_focus:
+            window.focus()
 
         return window
 
