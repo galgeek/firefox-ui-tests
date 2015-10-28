@@ -5,7 +5,7 @@ So you want to write code and get it landed in the official Firefox UI Tests rep
 Please follow our [Python style guide](http://ateam-bootcamp.readthedocs.org/en/latest/reference/python-style.html), and also test with [pylama](https://pypi.python.org/pypi/pylama). If something is unclear, look at existing code which might help you to understand it better.
 
 ### Submitting Patches
-When you think the code is ready for review, a pull request should be created on Github. Your initial commit should have the form Bug %ID% - %Summary%. r=%reviewer%; the bug ID is from bugzilla.mozilla.org. For each update to the PR, we automatically run all the tests via [Travis CI](http://travis-ci.org/). If tests are failing, it's best to address the failures before requesting review; otherwise you may wait for a review.
+When you think the code is ready for review, a pull request should be created on Github. Your initial commit should have the form `Bug %ID% - %Summary%. r=%reviewer%`; the bug ID is from bugzilla.mozilla.org. For each update to the PR, we automatically run all the tests via [Travis CI](http://travis-ci.org/). If tests are failing, it's best to address the failures before requesting review; otherwise you may wait for a review.
 
 To request review, add a text attachment to the issue at bugzilla.mozilla.org: paste the PR's Github URL into the File box, use "github pull request" as the Description, and then below, flag the attachment for review (or feedback) by choosing "?" from the adjacent menu and adding a proposed reviewer under Requestee.
 
@@ -14,4 +14,4 @@ If your reviewer requests updates, add them to the same branch in a new commit a
 ## Managing the Repository
 
 ### Merging Pull Requests
-Once a PR is in its final state it needs to be merged into the upstream mozilla-central branch. For that please **DO NOT** use the Github merge button! But merge it yourself on the command line. Reason is that we want to have a clean history. Before pushing the changes to upstream mozilla-central, make sure that all individual commits have been squashed into a single one with a commit message ending with the issue number, e.g. "Fix for broken download behavior (#45)". Also check with `git log` to not push merge commits. Only merge PRs where Travis does not report any failure!
+Once a PR is in its final state it needs to be merged into the upstream mozilla-central branch. For that please **DO NOT** use the Github merge button! But merge it yourself on the command line. Reason is that we want to have a clean history. Before pushing the changes to upstream mozilla-central, make sure that all individual commits have been squashed into a single one with a commit message in the form `Bug %ID% - %Summary%. r=%reviewer%`. Also check with `git log` to not push merge commits. Only merge PRs where Travis does not report any failure!
