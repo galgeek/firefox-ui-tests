@@ -3,7 +3,7 @@ set -ev
 
 if [[ $LOCALE = 'en-US' ]]
 then
-    mozdownload --type daily --branch mozilla-aurora
+    mozdownload --type daily --branch mozilla-central
 else
-    mozdownload --type daily --branch mozilla-aurora --locale $LOCALE
+    mozdownload --type daily --branch mozilla-central --locale ru
 fi

@@ -19,11 +19,13 @@ env:
       DISPLAY=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo ':99'; fi)
       MOZ_XVFB=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo 1; fi)
       PIP_STRICT_VERSIONS=--strict
+
     # ... and with the official pypi website / locale en-US
     - LOCALE='en-US'
       DISPLAY=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo ':99'; fi)
       MOZ_XVFB=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo 1; fi)
       PIP_STRICT_VERSIONS=
+
     # ... and again with the official pypi website / locale ru
     - LOCALE='ru'
       DISPLAY=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo ':99'; fi)
