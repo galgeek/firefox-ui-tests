@@ -5,5 +5,5 @@ if [[ $LOCALE = 'en-US' ]]
 then
     mozdownload --type daily --branch mozilla-central
 else
-    mozdownload --type daily --branch mozilla-aurora --locale ta
+    mozdownload --type daily --branch mozilla-central --locale ru
 fi

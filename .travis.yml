@@ -26,8 +26,8 @@ env:
       MOZ_XVFB=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo 1; fi)
       PIP_STRICT_VERSIONS=
 
-    # ... and again with the official pypi website / locale ta (failed for bug 1084289)
-    - LOCALE='ta'
+    # ... and again with the official pypi website / locale ru
+    - LOCALE='ru'
       DISPLAY=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo ':99'; fi)
       MOZ_XVFB=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo 1; fi)
       PIP_STRICT_VERSIONS=
