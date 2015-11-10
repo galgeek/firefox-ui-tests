@@ -50,7 +50,7 @@ before_script:
     - pep8 --config ./.pep8.rc --exclude=client .
 
     # Prepare the build and everything else
-    - ./.travis/before_script.sh
+    - mozdownload --type daily --branch $TRAVIS_BRANCH --locale $LOCALE
 
 script:
     # Run in non-e10s mode
