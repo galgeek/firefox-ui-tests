@@ -16,7 +16,6 @@ env:
     - MOZ_BRANCH='mozilla-central'
     - DISPLAY=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo ':99'; fi)
     - MOZ_XVFB=$(if [[ $TRAVIS_OS_NAME = 'linux' ]]; then echo 1; fi)
-    - PIP_STRICT_VERSIONS=
   matrix:
     # Test with our internal pypi mirror / locale en-US
     - LOCALE='en-US'
